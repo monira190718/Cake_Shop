@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        My Profile | Heavenly Bakehouse
+    </title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          th:href="@{/dashboard.css}">
+
+    <link rel="stylesheet"
+          th:href="@{/profile.css}">
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            Heavenly Bakehouse
+
+            <span>
+                Customer Panel
+            </span>
+
+        </div>
+
+        <nav>
+
+            <a th:href="@{/cakeshop/dashboard}">
+                Dashboard
+            </a>
+
+           
+
+            <a th:href="@{/cakeshop/customize}">
+                Customize Cake
+            </a>
+
+            <a class="active"
+               th:href="@{/cakeshop/profile}">
+
+                Profile
+
+            </a>
+
+            <form
+                    th:action="@{/logout}"
+                    method="post"
+                    class="logout-form">
+
+                <button
+                        type="submit"
+                        class="logout-button">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </nav>
+
+    </aside>
+
+    <!-- Profile content -->
+
+    <main class="content profile-content">
+
+        <header>
+
+            <h1>
+                My Profile
+            </h1>
+
+            <p>
+                View and manage your account information.
+            </p>
+
+        </header>
+
+        <!-- Messages -->
+
+        <div class="message success"
+             th:if="${profileSuccess}"
+             th:text="${profileSuccess}">
+        </div>
+
+        <div class="message error"
+             th:if="${profileError}"
+             th:text="${profileError}">
+        </div>
+
+        <div class="message success"
+             th:if="${pictureSuccess}"
+             th:text="${pictureSuccess}">
+        </div>
+
+        <div class="message error"
+             th:if="${pictureError}"
+             th:text="${pictureError}">
+        </div>
+
+        <div class="message success"
+             th:if="${passwordSuccess}"
+             th:text="${passwordSuccess}">
+        </div>
+
+        <div class="message error"
+             th:if="${passwordError}"
+             th:text="${passwordError}">
+        </div>
+
+        <!-- Main Profile Card -->
+
+        <section class="profile-card">
+
+            <div class="profile-top">
+
+                <div class="profile-picture-wrapper">
+
+                    <img
+                            th:if="${customer.profilePicture != null
+                        && !customer.profilePicture.isBlank()}"
+
+                            th:src="@{
+                        '/profile-images/'
+                        + ${customer.profilePicture}
+                        }"
+
+                            class="profile-picture"
+
+                            alt="Customer profile picture">
+
+                    <div
+                            th:unless="${customer.profilePicture != null
+                        && !customer.profilePicture.isBlank()}"
+
+                            class="profile-picture default-picture"
+
+                            th:text="${#strings.toUpperCase(
+                        #strings.substring(
+                        customer.name,
+                        0,
+                        1
+                        )
+                        )}">
+
+                        C
+
+                    </div>
+
+                </div>
+
+                <div class="profile-name">
+
+                    <h2 th:text="${customer.name}">
+                        Customer Name
+                    </h2>
+
+                    <p th:text="${customer.email}">
+                        customer@example.com
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Profile picture upload -->
+
+            <form
+                    class="picture-upload-form"
+
+                    th:action="@{/cakeshop/profile/picture}"
+
+                    method="post"
+
+                    enctype="multipart/form-data">
+
+                <label for="profilePicture">
+                    Select Profile Picture
+                </label>
+
+                <input
+                        type="file"
+
+                        id="profilePicture"
+
+                        name="profilePicture"
+
+                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+
+                        required>
+
+                <p class="upload-note">
+                    JPG, JPEG or PNG. Maximum size 5 MB.
+                </p>
+
+                <button type="submit">
+                    Upload Picture
+                </button>
+
+            </form>
+
+            <!-- Customer information -->
+
+            <div class="customer-information">
+
+                <div class="information-item">
+
+                    <span>
+                        Full Name
+                    </span>
+
+                    <strong th:text="${customer.name}">
+                        Customer Name
+                    </strong>
+
+                </div>
+
+                <div class="information-item">
+
+                    <span>
+                        Email Address
+                    </span>
+
+                    <strong th:text="${customer.email}">
+                        customer@example.com
+                    </strong>
+
+                </div>
+
+                <div class="information-item">
+
+                    <span>
+                        Phone Number
+                    </span>
+
+                    <strong th:text="${customer.phonenumber}">
+                        01XXXXXXXXX
+                    </strong>
+
+                </div>
+
+                <div class="information-item">
+
+                    <span>
+                        Address
+                    </span>
+
+                    <strong th:text="${
+                    customer.address != null
+                    && !customer.address.isBlank()
+                    ? customer.address
+                    : 'Address not added yet'
+                    }">
+
+                        Address not added yet
+
+                    </strong>
+
+                </div>
+
+                <div class="information-item">
+
+                    <span>
+                        Account Role
+                    </span>
+
+                    <strong th:text="${customer.role}">
+                        CUSTOMER
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <!-- Buttons -->
+
+            <div class="profile-buttons">
+
+                <button
+                        type="button"
+                        onclick="toggleProfileSection(
+                    'editProfileSection'
+                    )">
+
+                    Edit Profile
+
+                </button>
+
+                <button
+                        type="button"
+                        class="secondary-button"
+                        onclick="toggleProfileSection(
+                    'passwordSection'
+                    )">
+
+                    Change Password
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- Edit Profile -->
+
+        <section
+                class="profile-form-section"
+                id="editProfileSection">
+
+            <h2>
+                Edit Profile
+            </h2>
+
+            <form
+                    th:action="@{/cakeshop/profile/update}"
+                    method="post">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="name">
+                            Full Name
+                        </label>
+
+                        <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                th:value="${customer.name}"
+                                required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="phone">
+                            Phone Number
+                        </label>
+
+                        <input
+                                type="tel"
+                                id="phone"
+                                name="phonenumber"
+                                th:value="${customer.phonenumber}"
+                                required>
+
+                    </div>
+
+                    <div class="form-group full-width">
+
+                        <label for="address">
+                            Address
+                        </label>
+
+                        <textarea
+                                id="address"
+                                name="address"
+                                rows="4"
+                                placeholder="Enter your full address"
+                                th:text="${customer.address}">
+                        </textarea>
+
+                    </div>
+
+                </div>
+
+                <button type="submit">
+                    Save Profile
+                </button>
+
+            </form>
+
+        </section>
+
+        <!-- Change Password -->
+
+        <section
+                class="profile-form-section"
+                id="passwordSection">
+
+            <h2>
+                Change Password
+            </h2>
+
+            <form
+                    th:action="@{/cakeshop/profile/change-password}"
+                    method="post">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="currentPassword">
+                            Current Password
+                        </label>
+
+                        <input
+                                type="password"
+                                id="currentPassword"
+                                name="currentPassword"
+                                required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="newPassword">
+                            New Password
+                        </label>
+
+                        <input
+                                type="password"
+                                id="newPassword"
+                                name="newPassword"
+                                minlength="6"
+                                required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="confirmPassword">
+                            Confirm New Password
+                        </label>
+
+                        <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                minlength="6"
+                                required>
+
+                    </div>
+
+                </div>
+
+                <button type="submit">
+                    Change Password
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+
+    function toggleProfileSection(sectionId) {
+
+        const selectedSection =
+            document.getElementById(sectionId);
+
+        const allSections =
+            document.querySelectorAll(
+                ".profile-form-section"
+            );
+
+        allSections.forEach(function (section) {
+
+            if (section !== selectedSection) {
+
+                section.classList.remove(
+                    "show"
+                );
+            }
+        });
+
+        selectedSection.classList.toggle(
+            "show"
+        );
+
+        if (selectedSection.classList.contains("show")) {
+
+            selectedSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>
+        Customer Dashboard | Heavenly Bakehouse
+    </title>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+          rel="stylesheet">
+
+
+    <link rel="stylesheet" th:href="@{/dashboard.css}">
+
+</head>
+<body>
+<div class="dashboard">
+
+
+
+    <!-- ================= Sidebar ================= -->
+
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            Heavenly Bakehouse
+
+            <span>
+            Customer Panel
+        </span>
+
+        </div>
+
+        <nav>
+
+
+            <a class="active"
+               th:href="@{/cakeshop/dashboard}">
+
+                Dashboard
+
+            </a>
+
+         <!--   <a th:href="@{/cakeshop/my-orders}">
+
+                My Orders
+
+            </a> -->
+
+            <a th:href="@{/cakeshop/customize}">
+
+                Customize Cake
+
+            </a>
+
+            <a th:href="@{/cakeshop/profile}">
+
+                Profile
+
+            </a>
+
+
+           <!-- <a href="/logout">
+
+                Logout
+
+            </a> -->
+            <form
+                    th:action="@{/logout}"
+                    method="post"
+                    class="logout-form">
+
+                <button
+                        type="submit"
+                        class="logout-button">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </nav>
+
+    </aside>
+
+    <!-- ================= Main Content ================= -->
+
+
+    <main class="content">
+
+        <!-- Success Message -->
+
+        <div th:if="${successMessage}"
+             class="success-message"
+             th:text="${successMessage}">
+        </div>
+
+
+        <header>
+
+
+            <h1>
+
+
+                Hi
+
+                <span th:text="${customerName}">
+    Customer
+</span>
+
+
+                , Welcome to Cake Heaven
+
+
+            </h1>
+
+            <p>
+
+                Order your favourite cakes and make your moments sweeter.
+
+            </p>
+
+
+        </header>
+
+        <!-- ================= Summary ================= -->
+
+
+        <section class="summary">
+
+
+            <div class="box">
+
+                <h3>
+                    Total Orders
+                </h3>
+
+
+                <strong th:text="${totalOrders}">
+                    0
+                </strong>
+
+
+            </div>
+
+            <div class="box">
+
+
+                <h3>
+                    Preparing
+                </h3>
+
+
+                <strong th:text="${preparingOrders}">
+                    0
+                </strong>
+
+
+            </div>
+
+
+            <div class="box">
+
+
+                <h3>
+                    Completed
+                </h3>
+
+
+                <strong th:text="${completedOrders}">
+                    0
+                </strong>
+
+
+            </div>
+
+            <div class="box">
+
+
+                <h3>
+                    argent Cancel
+                </h3>
+
+
+                <strong th:text="${cancelableOrders}">
+                    0
+                </strong>
+
+
+            </div>
+
+
+
+        </section>
+
+        <!-- ================= Categories ================= -->
+
+
+
+        <!-- ================= Available Cakes ================= -->
+
+
+
+        <section>
+
+
+
+            <h2>
+
+                Available Cakes
+
+            </h2>
+
+            <div th:if="${#lists.isEmpty(cakes)}"
+                 style="
+     background:white;
+     padding:35px;
+     border-radius:20px;
+     text-align:center;
+     font-weight:600;
+     color:#8b6f78;
+     margin-top:20px;
+     ">
+
+                Available cakes will be shown here.
+
+            </div>
+            <div class="cake-grid" th:if="${!#lists.isEmpty(cakes)}">
+
+
+                <div class="cake-card"
+                     th:each="cake : ${cakes}">
+
+                    <img th:if="${cake.image != null and !#strings.isEmpty(cake.image)}"
+                         th:src="${cake.image}"
+                         th:alt="${cake.name}"
+                         class="cake-image">
+
+                    <div th:if="${cake.image == null or #strings.isEmpty(cake.image)}"
+                         class="cake-image-placeholder">
+                        🎂
+                    </div>
+
+                    <h3 th:text="${cake.name}">
+                        Cake Name
+                    </h3>
+
+                    <p th:text="${cake.description}">
+                        Cake Description
+                    </p>
+
+                    <h4>
+                        ৳
+                        <span th:text="${cake.price}">
+            0
+        </span>
+                    </h4>
+
+                    <a th:href="@{/cakeshop/order/{id}(id=${cake.id})}">
+                        <button type="button">
+                            Order Now
+                        </button>
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= Customize Cake ================= -->
+
+
+
+        <section class="custom-box">
+
+
+
+            <h2>
+
+                Create Your Own Cake
+
+            </h2>
+
+
+
+
+            <p>
+
+                Upload your cake design and tell us your requirements.
+
+            </p>
+
+
+
+
+
+            <a th:href="@{/cakeshop/customize}">
+
+
+                <button>
+
+                    Customize Cake Order
+
+                </button>
+
+
+            </a>
+
+
+
+
+
+
+            <div class="notice">
+
+
+                ⚠ Custom cake orders must be placed at least
+
+
+                <strong>
+
+                    2 days before delivery.
+
+                </strong>
+
+            </div>
+        </section>
+
+
+        <!-- ================= Custom Cake Requests ================= -->
+
+
+        <section class="custom-request-section">
+
+
+            <h2>
+                My Custom Cake Requests
+            </h2>
+
+
+
+
+            <div th:if="${#lists.isEmpty(customOrders)}"
+                 class="empty-custom">
+
+                No custom cake requests yet.
+
+            </div>
+
+
+            <div th:each="custom:${customOrders}"
+                 class="custom-card">
+
+                <div class="custom-image">
+
+                    <img th:src="${custom.image}"
+                         alt="Custom Cake">
+
+                </div>
+
+                <div class="custom-info">
+
+
+                    <h3>
+                        Custom Cake Request
+                    </h3>
+                    <p>
+
+                        <b>Description:</b>
+
+                        <span th:text="${custom.description}">
+            </span>
+
+                    </p>
+
+                    <p>
+
+                        <b>Delivery Date:</b>
+
+                        <span th:text="${custom.deliveryDate}">
+            </span>
+
+                    </p>
+
+                    <div th:if="${custom.adminMessage}"
+                         class="admin-message">
+
+
+                        <h4>
+                            Message From Heavenly Bakehouse
+                        </h4>
+
+
+                        <p th:text="${custom.adminMessage}">
+                        </p>
+
+
+                    </div>
+
+                    <div th:if="${custom.quotedPrice != null}"
+                         class="price-box">
+
+
+                        Custom Cake Price:
+
+                        <strong>
+
+                            ৳ <span th:text="${custom.quotedPrice}">
+                </span>
+
+                        </strong>
+
+
+                    </div>
+
+                    <!--cancel -->
+                    <div class="cancel-message"
+                         th:if="${custom.status == 'CANCELLED'}">
+
+                        Your custom cake request has been cancelled.
+
+                    </div>
+
+                    <span class="badge"
+                          th:if="${custom.status == 'CANCELLED'}">
+
+    CANCELLED
+
+</span>
+
+                    <div class="custom-actions"
+                         th:if="${custom.status == 'WAITING_CONFIRMATION'}">
+
+
+                        <a th:href="@{/cakeshop/customize/accept/{id}(id=${custom.id})}">
+
+                            <button class="confirm-btn">
+                                Confirm Order
+                            </button>
+
+                        </a>
+
+                       <!-- <a th:href="@{/cakeshop/customize/reject/{id}(id=${custom.id})}">
+
+                            <button class="reject-btn">
+                                Reject
+                            </button>
+
+                        </a>   -->
+
+                        <a th:href="@{/cakeshop/customize/cancel/{id}(id=${custom.id})}">
+
+                            <button class="cancel-btn">
+                                Cancel
+                            </button>
+
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= Recent Orders ================= -->
+
+        <section>
+
+
+
+            <h2>
+
+                My Recent Orders
+
+            </h2>
+
+            <div th:if="${#lists.isEmpty(orders)}"
+                 style="
+     padding:25px;
+     text-align:center;
+     background:#fff8f0;
+     border-radius:12px;
+     color:#7a5a5a;
+     font-size:18px;
+     font-weight:600;
+     margin-top:15px;">
+
+                No orders placed yet.
+
+            </div>
+
+
+
+            <table th:if="${!#lists.isEmpty(orders)}">
+
+
+                <tr>
+
+                    <th>
+
+                        Order ID
+
+                    </th>
+
+                    <th>
+
+                        Cake
+
+                    </th>
+
+
+                    <th>
+
+                        Delivery Date</th>
+
+                    <th>Price</th>
+
+                    <th>Status
+
+                    </th>
+
+
+                    <th>
+
+                        Action
+
+                    </th>
+
+                </tr>
+
+                <tr th:each="order:${orders}">
+
+
+                    <td th:text="${order.id}">
+
+                        #1001
+                    </td>
+
+
+                    <td>
+
+<span th:if="${order.cake != null}"
+      th:text="${order.cake.name}">
+    Cake
+</span>
+
+
+                        <span th:if="${order.cake == null}">
+    Custom Cake
+</span>
+
+                    </td>
+
+                    <td th:text="${order.deliveryDate}">
+
+                        25 September 2026
+
+                    </td>
+
+                    <td th:text="${order.totalPrice}">
+                        0
+                    </td>
+                    <td>
+
+
+<span class="pending"
+      th:text="${order.status}">
+
+Preparing
+
+</span>
+                        <div th:if="${order.customerMessage}"
+                             style="
+     margin-top:8px;
+     padding:10px;
+     background:#fff3cd;
+     color:#856404;
+     border-radius:8px;
+     font-size:13px;">
+
+    <span th:text="${order.customerMessage}">
+    </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+
+                        <!-- Cancel Button (Only before payment) -->
+
+                        <a th:if="${order.paymentStatus != 'PAID'}"
+                           th:href="@{'/cakeshop/order/cancel/'+${order.id}}">
+
+                            <button class="cancel">
+                                Cancel
+                            </button>
+
+                        </a>
+
+
+
+                        <!-- Pay Now Button (Only approved and unpaid) -->
+
+                        <button
+                                class="payment-btn"
+                                th:if="${order.status == 'APPROVED'
+        and order.paymentStatus != 'PAID'}"
+
+                                th:onclick="'openPayment(' + ${order.id} + ')'">
+
+                            Pay Now
+
+                        </button>
+
+
+
+                        <!-- After payment -->
+
+                        <span
+                                th:if="${order.paymentStatus == 'PAID'}"
+                                style="
+color:#198754;
+font-weight:600;
+">
+
+    Payment Completed ✓
+
+</span>
+
+                    </td>
+
+                </tr>
+
+
+
+            </table>
+
+
+            <p class="cancel-rule">
+
+
+                Cancellation allowed only before payment.
+                There is no return policy.
+                Delivery charge included with the cakes prices.
+
+            </p>
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+<div id="paymentBox"
+     style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+align-items:center;
+justify-content:center;
+">
+
+
+    <div style="
+background:white;
+padding:30px;
+border-radius:15px;
+text-align:center;
+width:320px;
+position:relative;
+">
+
+        <!-- Close Button -->
+        <button onclick="closePayment()"
+                style="
+position:absolute;
+right:-15px;
+top:-15px;
+width:35px;
+height:35px;
+border-radius:50%;
+border:none;
+background:#9b2f55;
+color:white;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:10;
+">
+            ×
+        </button>
+
+
+
+        <h3>Select Payment Method</h3>
+
+
+        <button onclick="paymentDone('bKash')">
+            bKash
+        </button>
+
+
+        <button onclick="paymentDone('Nagad')">
+            Nagad
+        </button>
+
+
+        <button onclick="paymentDone('Bank')">
+            Bank
+        </button>
+
+
+        <button onclick="paymentDone('Card')">
+            Card
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+    let selectedOrderId = null;
+
+
+    function openPayment(orderId){
+
+        selectedOrderId = orderId;
+
+        document.getElementById("paymentBox")
+            .style.display = "flex";
+
+    }
+
+
+
+    function paymentDone(method){
+
+
+        window.location.href =
+            "/cakeshop/payment-success/"
+            + selectedOrderId
+            + "?method="
+            + method;
+
+
+    }
+
+
+
+    function closePayment(){
+
+        document.getElementById("paymentBox")
+            .style.display = "none";
+
+        selectedOrderId = null;
+
+    }
+
+
+</script>
+</body>
+
+</html>

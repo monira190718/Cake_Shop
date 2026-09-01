@@ -1,0 +1,326 @@
+
+<!DOCTYPE html >
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Heavenly Bakehouse — Register</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Caveat:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+          rel="stylesheet">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet" th:href="@{/registration.css}">
+</head>
+
+<body>
+
+<div class="wrap">
+
+    <!-- ================= LEFT SIDE ================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="crest">
+                ✦ &nbsp; EST. SWEETNESS
+            </div>
+
+            <h1>
+                Create your<br>
+                <span class="script">Heavenly</span>
+                account
+            </h1>
+
+            <p class="hero-text">
+                Join our little world of sweetness.
+                Create an account to discover delicious cakes,
+                save your favourites, and make every celebration
+                a little more special.
+            </p>
+
+            <!-- Decorative icons instead of picture -->
+            <div class="sweet-decoration">
+
+                <div class="sweet">🍰</div>
+
+                <div class="sweet">🧁</div>
+
+                <div class="sweet">🍪</div>
+
+                <div class="sweet">✨</div>
+
+            </div>
+
+        </div>
+
+        <div class="hero-quote">
+            “A little sweetness makes every moment better.”
+
+            <span>— Heavenly Bakehouse</span>
+        </div>
+
+    </section>
+
+
+    <!-- ================= RIGHT SIDE ================= -->
+
+    <section class="form-panel">
+
+        <div class="form-card">
+
+            <div class="eyebrow">
+                WELCOME TO THE FAMILY
+            </div>
+
+            <h2>
+                Create your account
+            </h2>
+
+            <p class="lead">
+                Fill in your details and let the sweetness begin.
+            </p>
+
+
+            <!-- ================= REGISTRATION FORM ================= -->
+            <div class="registration-error"
+                 th:if="${registrationError}"
+                 th:text="${registrationError}">
+            </div>
+            
+            <form th:action="@{/registration}" th:object="${user}" method="post">
+
+                <!-- NAME -->
+
+                <div class="field">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <span class="input-icon">♙</span>
+
+                        <input
+                                type="text"
+                                id="name"
+                                th:field="*{name}"
+                                placeholder="Enter your full name"
+                                required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="field">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <span class="input-icon">✉</span>
+
+                        <input
+                                type="email"
+                                id="email"
+                                th:field="*{email}"
+                                placeholder="you@example.com"
+                                required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="field">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <span class="input-icon">☎</span>
+
+                        <input
+                                type="tel"
+                                id="phone"
+                                th:field="*{phonenumber}"
+                                placeholder="01XXXXXXXXX"
+                                required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="field">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <span class="input-icon">◆</span>
+
+                        <input
+                                type="password"
+                                id="password"
+                                th:field="*{password}"
+                                placeholder="Create a strong password"
+                                required>
+
+
+
+                        <button
+                                type="button"
+                                class="toggle-pass"
+                                onclick="togglePassword()">
+
+                            👁
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ROLE -->
+
+                <div class="field">
+
+                    <label for="role">
+                        Role
+                    </label>
+
+                    <div class="input-wrap">
+                        <select
+                                id="role"
+                                th:field="*{role}"
+                                required>
+
+                            <option value="" disabled selected>
+                                Select your role
+                            </option>
+
+                            <option value="CUSTOMER">
+                                Customer
+                            </option>
+
+                            <option value="ADMIN">
+                                Admin
+                            </option>
+
+                            <option value="HEAD_ADMIN">
+                                Headadmin
+                            </option>
+
+                            <option value="DELIVERYMAN">
+                                Delivery Man
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <span class="select-arrow">⌄</span>
+
+                </div>
+
+                <!-- TERMS -->
+
+                <label class="terms">
+
+                    <input type="checkbox" required>
+
+                    <span>
+                        I agree to the
+                        <a href="#">Terms & Conditions</a>
+                        and
+                        <a href="#">Privacy Policy</a>.
+                    </span>
+
+                </label>
+
+
+                <!-- REGISTER BUTTON -->
+
+                <button
+                        type="submit"
+                        class="btn-register">
+
+                    Create Account ✦
+
+                </button>
+
+            </form>
+
+
+            <!-- LOGIN LINK -->
+
+            <div class="login-note">
+
+                Already have an account?
+
+                <a href="/login">
+                    Sign in
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ================= PASSWORD SCRIPT ================= -->
+
+<script>
+
+    function togglePassword() {
+
+        const password =
+            document.getElementById("password");
+
+        const button =
+            document.querySelector(".toggle-pass");
+
+        if (password.type === "password") {
+
+            password.type = "text";
+
+            button.textContent = "🙈";
+
+        } else {
+
+            password.type = "password";
+
+            button.textContent = "👁";
+        }
+    }
+
+</script>
+
+</body>
+</html>
+```

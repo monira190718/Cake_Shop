@@ -1,0 +1,795 @@
+:root {
+    --plum: #3B1425;
+    --plum-2: #4E1B32;
+    --berry: #8C2F4D;
+    --blush: #F6DCE2;
+    --cream: #FFF8F1;
+    --gold: #C9A227;
+    --gold-light: #E4C567;
+    --ink: #3B2A2E;
+    --ink-soft: #8A7A7C;
+    --line: #EDE2DE;
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================
+   BODY
+========================= */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+
+    min-height: 100vh;
+
+    display: flex;
+    align-items: stretch;
+}
+
+
+/* =========================
+   MAIN WRAPPER
+========================= */
+
+.wrap {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+
+/* =========================
+   LEFT HERO PANEL
+========================= */
+
+.hero {
+    flex: 1 1 50%;
+
+    position: relative;
+
+    background:
+            radial-gradient(
+                    120% 120% at 15% 10%,
+                    var(--plum-2) 0%,
+                    var(--plum) 55%,
+                    #2A0E1B 100%
+            );
+
+    color: var(--blush);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 56px 56px 40px;
+
+    overflow: hidden;
+}
+
+
+/* Background dots */
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background-image:
+            radial-gradient(
+                    circle,
+                    rgba(255,255,255,0.10) 1.5px,
+                    transparent 1.5px
+            );
+
+    background-size: 26px 26px;
+
+    opacity: 0.5;
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   HERO TOP
+========================= */
+
+.hero-top {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* Crest */
+
+.crest {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 10px;
+
+    font-family:
+            'JetBrains Mono',
+            'Inter',
+            monospace;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: var(--gold-light);
+
+    border:
+            1px solid
+            rgba(228,197,103,0.4);
+
+    padding: 6px 14px;
+
+    border-radius: 99px;
+}
+
+
+/* Hero heading */
+
+.hero h1 {
+    font-family: 'Fraunces', serif;
+
+    font-weight: 600;
+
+    font-size: 44px;
+
+    line-height: 1.08;
+
+    margin-top: 26px;
+
+    max-width: 420px;
+}
+
+
+/* Heavenly text */
+
+.hero h1 .script {
+    font-family: 'Caveat', cursive;
+
+    font-weight: 700;
+
+    font-size: 1.35em;
+
+    color: var(--gold-light);
+
+    display: inline-block;
+
+    transform: rotate(-2deg);
+}
+
+
+/* Hero paragraph */
+
+.hero p.tag {
+    margin-top: 16px;
+
+    font-size: 15px;
+
+    color:
+            rgba(246,220,226,0.75);
+
+    max-width: 340px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================
+   CAKE IMAGE
+========================= */
+
+.cake-stage {
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-end;
+
+    flex: 1;
+
+    margin: 20px 0;
+}
+
+
+.photo-frame {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 380px;
+
+    border-radius: 18px;
+
+    padding: 10px;
+
+    background:
+            rgba(255,255,255,0.06);
+
+    border:
+            1px solid
+            rgba(228,197,103,0.25);
+
+    box-shadow:
+            0 30px 50px -16px
+            rgba(0,0,0,0.55);
+}
+
+
+.photo-frame img {
+    width: 100%;
+
+    height: 230px;
+
+    object-fit: cover;
+
+    object-position: center 35%;
+
+    border-radius: 12px;
+
+    display: block;
+}
+
+
+/* Cake tag */
+
+.photo-frame .tag-chip {
+    position: absolute;
+
+    bottom: -14px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background: var(--gold-light);
+
+    color: var(--plum);
+
+    font-family: 'Fraunces', serif;
+
+    font-weight: 600;
+
+    font-size: 12.5px;
+
+    padding: 6px 16px;
+
+    border-radius: 99px;
+
+    white-space: nowrap;
+
+    box-shadow:
+            0 8px 18px -6px
+            rgba(0,0,0,0.4);
+}
+
+
+/* =========================
+   HERO QUOTE
+========================= */
+
+.hero-quote {
+    position: relative;
+
+    z-index: 2;
+
+    border-top:
+            1px solid
+            rgba(246,220,226,0.18);
+
+    padding-top: 20px;
+
+    font-family: 'Fraunces', serif;
+
+    font-style: italic;
+
+    font-size: 15px;
+
+    color:
+            rgba(246,220,226,0.85);
+
+    line-height: 1.6;
+}
+
+
+.hero-quote span {
+    display: block;
+
+    margin-top: 8px;
+
+    font-family: 'Inter', sans-serif;
+
+    font-style: normal;
+
+    font-size: 11.5px;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+
+    color: var(--gold-light);
+}
+
+
+/* =========================
+   RIGHT FORM PANEL
+========================= */
+
+.form-panel {
+    flex: 1 1 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 40px;
+
+    background: var(--cream);
+}
+
+
+/* Form card */
+
+.form-card {
+    width: 100%;
+
+    max-width: 380px;
+}
+
+
+/* Eyebrow */
+
+.form-card .eyebrow {
+    font-family:
+            'JetBrains Mono',
+            'Inter',
+            monospace;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: var(--berry);
+
+    margin-bottom: 10px;
+}
+
+
+/* Form heading */
+
+.form-card h2 {
+    font-family: 'Fraunces', serif;
+
+    font-weight: 600;
+
+    font-size: 30px;
+
+    color: var(--plum);
+}
+
+
+/* Lead text */
+
+.form-card p.lead {
+    margin-top: 8px;
+
+    font-size: 14px;
+
+    color: var(--ink-soft);
+
+    margin-bottom: 32px;
+}
+
+
+/* =========================
+   FORM FIELDS
+========================= */
+
+.field {
+    margin-bottom: 20px;
+}
+
+
+.field label {
+    display: block;
+
+    font-size: 12.5px;
+
+    font-weight: 700;
+
+    color: var(--ink);
+
+    margin-bottom: 7px;
+}
+
+
+/* Input wrapper */
+
+.input-wrap {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+}
+
+
+/* Input icon */
+
+.input-wrap svg {
+    position: absolute;
+
+    left: 14px;
+
+    width: 16px;
+    height: 16px;
+
+    stroke: var(--ink-soft);
+
+    fill: none;
+
+    stroke-width: 1.7;
+
+    pointer-events: none;
+}
+
+
+/* Input */
+
+.input-wrap input {
+    width: 100%;
+
+    padding:
+            13px
+            14px
+            13px
+            40px;
+
+    border:
+            1.5px solid
+            var(--line);
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    font-family: 'Inter', sans-serif;
+
+    background: #fff;
+
+    color: var(--ink);
+
+    outline: none;
+
+    transition:
+            border-color .15s ease,
+            box-shadow .15s ease;
+}
+
+
+.input-wrap input::placeholder {
+    color: #C9B9BA;
+}
+
+
+.input-wrap input:focus {
+    border-color: var(--berry);
+
+    box-shadow:
+            0 0 0 3px
+            rgba(140,47,77,0.12);
+}
+
+
+/* =========================
+   PASSWORD TOGGLE
+========================= */
+
+.toggle-pass {
+    position: absolute;
+
+    right: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    cursor: pointer;
+
+    background: none;
+
+    border: none;
+
+    border-radius: 6px;
+
+    padding: 0;
+
+    transition:
+            background .15s ease;
+}
+
+
+.toggle-pass:hover {
+    background:
+            rgba(140,47,77,0.08);
+}
+
+
+.toggle-pass svg {
+    width: 18px;
+    height: 18px;
+
+    stroke: var(--ink-soft);
+
+    fill: none;
+
+    stroke-width: 2;
+}
+
+
+.toggle-pass:hover svg {
+    stroke: var(--berry);
+}
+
+
+/* Hide eye-off initially */
+
+.toggle-pass .eye-off {
+    display: none;
+}
+
+
+.toggle-pass.is-visible .eye-on {
+    display: none;
+}
+
+
+.toggle-pass.is-visible .eye-off {
+    display: block;
+}
+
+
+/* =========================
+   REMEMBER / FORGOT
+========================= */
+
+.row-between {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin: -6px 0 26px;
+
+    font-size: 13px;
+}
+
+
+.remember {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--ink-soft);
+}
+
+
+.remember input {
+    accent-color: var(--berry);
+}
+
+
+.forgot {
+    color: var(--berry);
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.forgot:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   LOGIN BUTTON
+========================= */
+
+.btn-login {
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    var(--berry),
+                    #6E2440
+            );
+
+    color: #fff;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14.5px;
+
+    font-weight: 600;
+
+    letter-spacing: .3px;
+
+    cursor: pointer;
+
+    box-shadow:
+            0 10px 24px -8px
+            rgba(140,47,77,0.55);
+
+    transition:
+            transform .15s ease,
+            box-shadow .15s ease;
+}
+
+
+.btn-login:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+            0 14px 28px -8px
+            rgba(140,47,77,0.6);
+}
+
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+
+/* =========================
+   SIGN UP
+========================= */
+
+.signup-note {
+    text-align: center;
+
+    font-size: 13.5px;
+
+    color: var(--ink-soft);
+
+    margin-top: 30px;
+}
+
+
+.signup-note a {
+    color: var(--berry);
+
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+.signup-note a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   ERROR MESSAGE
+========================= */
+
+.error {
+    color: #b42318;
+
+    background: #fff1f0;
+
+    border: 1px solid #f5c2c0;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 900px) {
+
+    .wrap {
+        flex-direction: column;
+    }
+
+
+    .hero {
+        padding: 40px 32px;
+
+        min-height: 340px;
+    }
+
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+
+    .cake-stage {
+        margin: 16px 0;
+    }
+
+
+    .photo-frame {
+        max-width: 280px;
+    }
+
+
+    .photo-frame img {
+        height: 170px;
+    }
+
+
+    .hero-quote {
+        display: none;
+    }
+
+
+    .form-panel {
+        padding: 36px 24px 60px;
+    }
+}
+.logout-success-message {
+    width: 100%;
+    margin: -12px 0 18px;
+    padding: 12px 15px;
+
+    color: #246b3c;
+    background: #e8f6ed;
+    border: 1px solid #bfe2ca;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+}

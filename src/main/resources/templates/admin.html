@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heavenly Bakehouse — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/admin.css}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="mark">Heavenly Bakehouse</div>
+        <div class="sub">Admin Console</div>
+    </div>
+    <nav id="nav"></nav>
+
+    <div class="special-navigation">
+
+        <a th:href="@{/cakeshop/admin/profile}"
+           class="nav-item-link">
+            Profile
+        </a>
+
+        <a th:if="${admin.role == 'HEAD_ADMIN'}"
+           th:href="@{/cakeshop/head-admin/admins}"
+           class="nav-item-link">
+            Manage Admins
+        </a>
+
+        <form th:action="@{/logout}"
+              method="post"
+              class="admin-logout-form">
+
+            <button type="submit"
+                    class="admin-logout-button">
+
+                Logout
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="sidebar-footer">
+
+        <div class="avatar">
+        <span th:text="${#strings.substring(admin.name, 0, 1)}">
+            A
+        </span>
+        </div>
+
+        <div>
+            <div style="color:#fff;font-weight:600;"
+                 th:text="${admin.name}">
+                Admin User
+            </div>
+            <div th:text="${admin.role == 'HEAD_ADMIN'
+                ? 'Head Administrator'
+                : 'Administrator'}">
+                Administrator
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main>
+    <div th:if="${successMessage}"
+         id="successMessage"
+         class="badge open admin-message"
+         th:text="${successMessage}">
+    </div>
+
+    <div th:if="${errorMessage}"
+         id="errorMessage"
+         class="badge closed admin-message"
+         th:text="${errorMessage}">
+    </div>
+    <div class="admin-welcome">
+
+        <h2>
+            Welcome,
+            <span th:text="${admin.name}">Admin</span>!
+        </h2>
+
+        <p th:if="${admin.role == 'HEAD_ADMIN'}">
+            You are signed in as Head Administrator.
+        </p>
+
+        <p th:if="${admin.role == 'ADMIN'}">
+            You are signed in as Administrator.
+        </p>
+
+    </div>
+    <header class="topbar">
+        <div class="titles">
+            <h1 id="pageTitle">Manage Cakes</h1>
+
+            <p id="pageSub">
+                Add, edit, and price your cakes
+            </p>
+        </div>
+        <div class="ticket-no" id="clock"></div>
+    </header>
+
+    <!-- 1. MANAGE CATEGORIES -->
+
+
+    <!-- 2. MANAGE CAKES -->
+
+    <section class="page active" id="page-cakes">
+
+        <div class="toolbar">
+            <input id="cakeSearchInput"
+                   class="search"
+                   type="search"
+                   placeholder="Search cakes..."
+                   autocomplete="off">
+
+            <a class="btn"
+               th:href="@{/cakeshop/admin/cakes/add}">
+                + Add Cake
+            </a>
+        </div>
+
+        <table id="cakeManagementTable">
+
+            <thead>
+            <tr>
+                <th>Cake</th>
+                <th>Price</th>
+                <th>Availability</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody id="cakeTableBody">
+
+            <tr class="cake-data-row"
+                th:each="cake : ${cakes}"
+                th:attr="data-cake-name=${cake.name}">
+
+                <!-- Admin table-এ picture দেখাবে না -->
+                <td th:text="${cake.name}">
+                    Cake Name
+                </td>
+
+
+
+                <td th:text="${'৳' +
+                #numbers.formatDecimal(
+                    cake.price, 1, 2
+                )}">
+                    ৳0.00
+                </td>
+
+                <td>
+                <span class="badge"
+                      th:classappend="${cake.available}
+                        ? ' open'
+                        : ' closed'"
+                      th:text="${cake.available}
+                        ? 'Available'
+                        : 'Unavailable'">
+                    Available
+                </span>
+                </td>
+
+                <td>
+                    <div class="cake-actions">
+
+                        <a class="btn ghost"
+                           style="padding:6px 12px;"
+                           th:href="@{/cakeshop/admin/cakes/edit/{id}
+            (id=${cake.id})}">
+                            Edit
+                        </a><br><br>
+
+                        <form class="delete-cake-form"
+                              th:action="@{/cakeshop/admin/cakes/delete/{id}
+               (id=${cake.id})}"
+                              method="post">
+
+                            <button type="submit"
+                                    class="btn delete-cake-button"
+                                    th:data-cake-name="${cake.name}">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+                </td>
+            </tr>
+
+            <tr id="noCakeDatabaseRow"
+                th:if="${#lists.isEmpty(cakes)}">
+
+                <td colspan="4"
+                    style="text-align:center;">
+                    No cakes have been added yet.
+                </td>
+            </tr>
+
+            <tr id="noCakeSearchRow"
+                style="display:none;">
+
+                <td colspan="4"
+                    style="text-align:center;">
+                    No matching cake found.
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 3. CUSTOMIZE CAKE ORDERS -->
+
+    <section class="page" id="page-customize">
+
+
+        <div class="toolbar">
+        </div>
+
+        <div class="grid grid-3"
+             id="customizeGrid">
+
+
+
+            <div class="card custom-order-card"
+                 th:each="custom:${customOrders}">
+
+
+                <!-- Customer uploaded image -->
+
+                <img class="custom-ref-img"
+                     th:src="${custom.image}"
+                     alt="Custom cake image">
+
+                <div class="custom-order-body">
+
+
+                    <div class="custom-order-top">
+
+
+                    <span class="custom-order-id"
+                          th:text="'#CU-' + ${custom.id}">
+                        #CU-101
+                    </span>
+
+                        <span class="badge pending"
+                              th:text="${custom.status}">
+                        PENDING
+                    </span>
+
+
+                    </div>
+                    <!-- Customer Name -->
+
+                    <div class="custom-order-name"
+                         th:text="${custom.customer.name}">
+                        Customer Name
+                    </div>
+
+                    <!-- Phone -->
+
+                    <div class="custom-order-meta">
+
+                        📞
+
+                        <span th:text="${custom.phone}">
+                        Phone
+                    </span>
+
+                    </div>
+
+                    <!-- Address -->
+
+                    <div class="custom-order-meta">
+
+                        📍
+
+                        <span th:text="${custom.address}">
+                        Address
+                    </span>
+
+                    </div>
+
+                    <!-- Delivery Date -->
+
+                    <div class="custom-order-meta">
+
+                        📅
+
+                        <span th:text="${custom.deliveryDate}">
+                        Delivery Date
+                    </span>
+
+                    </div>
+                    <!-- Description -->
+
+                    <div class="custom-order-note"
+                         th:text="${custom.description}">
+
+                        Custom cake description
+
+                    </div>
+
+                    <div class="custom-order-actions">
+
+                        <!-- Send Price -->
+                        <a class="btn"
+                           th:href="@{/cakeshop/customize/price/{id}(id=${custom.id})}">
+                            Send Price
+                        </a>
+
+                        <!-- cancel -->
+
+                        <a class="btn ghost"
+                           th:href="@{/cakeshop/admin/customize/cancel/{id}(id=${custom.id})}">
+
+                            cancel
+
+                        </a>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <!-- No request -->
+
+            <div th:if="${#lists.isEmpty(customOrders)}"
+                 style="
+             text-align:center;
+             width:100%;
+             padding:30px;
+             font-weight:600;
+             color:#8b6f78;
+             ">
+
+                No custom cake requests yet.
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+    <!-- 4. MANAGE EMPLOYEES -->
+
+
+    <!-- 5. VIEW ORDERS -->
+    <section class="page" id="page-orders">
+
+        <div class="toolbar">
+            <input id="orderSearchInput"
+                   class="search"
+                   placeholder="Search orders...">
+
+        </div>
+
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Image</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Cake</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Order Date</th>
+                <th>Delivery Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            <tr th:if="${#lists.isEmpty(orders)}">
+
+                <td colspan="12"
+                    style="
+        text-align:center;
+        padding:30px;
+        font-weight:600;
+        color:#8b6f78;
+        ">
+
+                    There is no order available.
+
+                </td>
+
+            </tr>
+
+            <tbody id="orderTableBody">
+
+
+            <tr th:each="order : ${orders}"
+                th:attr="
+    data-order-id=${order.id},
+    data-customer=${order.customer.name}">
+
+
+                <!-- Order ID -->
+                <td th:text="'#' + ${order.id}">
+                    #2041
+                </td>
+
+
+
+                <!-- Cake Image -->
+                <td>
+
+                    <!-- Regular Cake Image -->
+                    <img th:if="${order.cake != null}"
+                         th:src="${order.cake.image}"
+                         width="70"
+                         height="70"
+                         style="object-fit:cover;border-radius:10px;">
+
+
+                    <!-- Custom Cake Image -->
+                    <img th:if="${order.cake == null}"
+                         th:src="${order.customImage}"
+                         width="70"
+                         height="70"
+                         style="object-fit:cover;border-radius:10px;">
+
+
+                </td>
+
+
+
+                <!-- Customer Name -->
+                <td th:text="${order.customer.name}">
+                    Customer
+                </td>
+
+
+
+                <!-- Phone -->
+                <td th:text="${order.phone}">
+                    Phone
+                </td>
+
+
+
+                <!-- Address -->
+                <td th:text="${order.address}">
+                    Address
+                </td>
+
+
+
+                <!-- Cake Name -->
+                <td>
+
+    <span th:if="${order.cake != null}"
+          th:text="${order.cake.name}">
+        Cake
+    </span>
+
+
+                    <span th:if="${order.cake == null}">
+        Custom Cake
+    </span>
+
+                </td>
+
+                <!-- Quantity -->
+                <td th:text="${order.quantity}">
+                    1
+                </td>
+
+                <td th:text="${order.totalPrice}">
+                    0
+                </td>
+
+                <!-- Order Date -->
+                <td th:text="${#temporals.format(order.orderTime, 'dd-MM-yyyy HH:mm')}">
+                    27-08-2026 03:00
+                </td>
+
+
+                <!-- Delivery Date -->
+                <td th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}">
+                    30-08-2026
+                </td>
+
+                <!-- Status -->
+                <td>
+
+                <span
+                        th:classappend="${order.status == 'APPROVED'} ? 'badge open' :
+                                (${order.status == 'REJECTED'} ? 'badge closed' :
+                                'badge pending')"
+                        th:text="${order.status}">
+                    PENDING
+                </span>
+
+                </td>
+                <!-- Action -->
+                <td>
+
+
+                    <!-- Only pending order will show buttons -->
+
+                    <div th:if="${order.status == 'PENDING'}">
+
+
+                        <a class="btn"
+                           th:href="@{/cakeshop/order/approve/{id}(id=${order.id})}">
+
+                            Approve
+
+                        </a>
+
+
+                        <br><br><br>
+
+
+                        <a class="btn ghost"
+                           th:href="@{/cakeshop/order/reject/{id}(id=${order.id})}">
+
+                            Reject
+
+                        </a>
+
+
+                    </div>
+
+
+
+                    <!-- After approve -->
+
+                    <span th:if="${order.status == 'APPROVED'}"
+                          class="badge open">
+
+    APPROVED ✓
+
+</span>
+
+
+
+                    <!-- After reject -->
+
+                    <span th:if="${order.status == 'REJECTED'}"
+                          class="badge closed">
+
+    REJECTED ✕
+
+</span>
+
+
+
+                </td>
+            </tr>
+
+            <tr id="noOrderFound"
+                style="display:none;">
+
+                <td colspan="12"
+                    style="text-align:center; padding:20px; font-weight:600;">
+
+                    There is no matching order.
+
+                </td>
+
+            </tr>
+            </tbody>
+
+
+        </table>
+
+    </section>
+
+    <!-- 6. UPDATE ORDER STATUS -->
+    <section class="page" id="page-status">
+
+        <div class="toolbar">
+        </div>
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>Order #</th>
+
+                <th>Customer</th>
+
+                <th>Current Status</th>
+
+                <th>Update Status</th>
+
+            </tr>
+
+            </thead>
+
+            <tr th:if="${#lists.isEmpty(paidOrders)}">
+
+                <td colspan="4"
+                    style="
+        text-align:center;
+        padding:30px;
+        font-weight:600;
+        color:#8b6f78;
+        ">
+
+                    No orders available for update.
+
+                </td>
+
+            </tr>
+
+            <tbody>
+
+
+            <tr th:each="order:${paidOrders}">
+
+
+                <td th:text="'#'+${order.id}">
+                    #1
+                </td>
+
+
+
+                <td th:text="${order.customer.name}">
+                    Customer
+                </td>
+
+
+
+                <td>
+
+
+<span class="badge pending"
+      th:text="${order.deliveryStatus}">
+PREPARING
+</span>
+
+
+                </td>
+
+                <td>
+
+
+                    <!-- Delivered হলে update option hide হবে -->
+
+                    <div th:if="${order.deliveryStatus != 'DELIVERED'}">
+
+
+                        <form th:action="@{/cakeshop/order/update-status/{id}(id=${order.id})}"
+                              method="post">
+
+
+                            <select name="status"
+                                    class="status-select">
+
+
+                                <option value="PREPARING"
+                                        th:selected="${order.deliveryStatus == 'PREPARING'}">
+
+                                    Preparing
+
+                                </option>
+
+
+
+                                <option value="DELIVERED">
+
+                                    Delivered
+
+                                </option>
+
+
+
+                                <option value="CANCELLED"
+                                        th:selected="${order.deliveryStatus == 'CANCELLED'}">
+
+                                    Cancelled
+
+                                </option>
+
+
+
+                            </select>
+
+
+
+                            <button class="btn ghost"
+                                    type="submit">
+
+                                Update
+
+                            </button>
+
+
+                        </form>
+
+
+                    </div>
+
+
+
+                    <!-- Delivered হলে শুধু দেখাবে -->
+
+                    <span th:if="${order.deliveryStatus == 'DELIVERED'}"
+                          class="badge open">
+
+    DELIVERED ✓
+
+</span>
+
+
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 7. ASSIGN DELIVERY -->
+
+    <section class="page" id="page-assign-delivery">
+        <div class="toolbar">
+
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>DELIVERY DATE</th>
+                <th>Status</th>
+                <th>Assign Delivery Man</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="order : ${assignOrders}">
+                <td th:text="'#' + ${order.id}">#1</td>
+
+                <td th:text="${order.customer.name}">Customer Name</td>
+
+                <td th:text="${order.phone}">017XXXXXXXX</td>
+
+                <td th:text="${order.address}">Customer Address</td>
+
+                <td th:text="${order.deliveryDate}">
+                    29-08-2026
+                </td>
+                <td>
+                <span class="badge pending"
+                      th:text="${order.deliveryStatus}">
+                    PREPARING
+                </span>
+                </td>
+
+                <td>
+
+
+                    <div th:if="${order.deliveryAssignStatus != 'CONFIRMED'}">
+
+
+                       <!-- <form th:action="@{/cakeshop/admin/assign-delivery/{id}(id=${order.id})}"
+                              method="post">  -->
+
+                        <form th:action="${order.deliveryMan == null
+        ? '/cakeshop/admin/assign-delivery/' + order.id
+        : '/cakeshop/admin/reassign-delivery/' + order.id}"
+                              method="post">
+
+
+                            <select name="deliveryManId">
+
+
+                                <option value="">
+                                    -- Select delivery man --
+                                </option>
+
+
+                                <option th:each="man:${deliveryMen}"
+                                        th:value="${man.id}"
+                                        th:text="${man.name}">
+                                </option>
+
+
+                            </select>
+
+
+
+                            <button class="btn">
+
+<span th:text="${order.deliveryMan == null ? 'Assign' : 'Reassign'}">
+Assign
+</span>
+
+                            </button>
+
+
+                        </form>
+                    </div>
+
+                    <div th:if="${order.deliveryAssignStatus == 'CONFIRMED'}">
+
+
+<span th:text="${order.deliveryMan.name}">
+Draco
+</span>
+
+
+                        <span class="badge">
+
+Delivery Confirmed ✓
+
+</span>
+                    </div>
+
+                </td>
+
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(assignOrders)}">
+                <td colspan="6" style="text-align:center; padding:20px;">
+                    No preparing orders found.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 8. MANAGE PAYMENTS -->
+
+    <section class="page" id="page-payments">
+        <div class="toolbar">
+            <input id="paymentSearchInput"
+                   class="search"
+                   placeholder="Search payment method...">
+
+        </div>
+
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Cake</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+
+
+            <tr th:if="${#lists.isEmpty(payments)}">
+
+                <td colspan="5"
+                    style="
+        text-align:center;
+        padding:30px;
+        font-weight:600;
+        color:#8b6f78;
+        ">
+
+                    No payments available.
+
+                </td>
+
+            </tr>
+            <tbody id="paymentTableBody">
+
+            <tr th:each="order:${payments}"
+                th:attr="data-method=${order.paymentMethod}">
+
+
+                <td th:text="'#'+${order.id}">
+                    #1
+                </td>
+
+
+                <td>
+
+    <span th:if="${order.cake != null}"
+          th:text="${order.cake.name}">
+        Cake
+    </span>
+
+
+                    <span th:if="${order.cake == null}">
+        Custom Cake
+    </span>
+
+                </td>
+
+                <td th:text="${order.totalPrice}">
+                    500
+                </td>
+
+                <td th:text="${order.paymentMethod != null
+? order.paymentMethod
+: '-'}">
+
+                    -
+
+                </td>
+
+
+                <td>
+
+<span
+        class="badge"
+        th:classappend="${order.paymentStatus == 'PAID'}
+? ' open'
+: ' pending'"
+
+        th:text="${order.paymentStatus != null
+? order.paymentStatus
+: 'PENDING'}">
+
+PENDING
+
+</span>
+
+
+                </td>
+
+
+            </tr>
+
+            <tr id="noPaymentFound"
+                style="display:none;">
+
+                <td colspan="5"
+                    style="text-align:center;padding:20px;font-weight:600;">
+
+                    No payment found.
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+    </section>
+
+    <!-- 9. VIEW REPORTS -->
+    <section class="page" id="page-reports">
+
+
+        <div class="grid grid-3">
+
+
+            <div class="card stat">
+
+                <div class="label">
+                    This Month Revenue
+                </div>
+
+
+                <div class="value"
+                     th:text="'৳' + ${thisMonthRevenue}">
+                    ৳0
+                </div>
+
+
+            </div>
+
+
+
+            <div class="card stat">
+
+                <div class="label">
+                    Average Order Value
+                </div>
+
+
+                <div class="value"
+                     th:text="'৳' + ${averageOrderValue}">
+                    ৳0
+                </div>
+
+
+            </div>
+
+
+
+            <div class="card stat">
+
+                <div class="label">
+                    Delivered Orders
+                </div>
+
+
+                <div class="value"
+                     th:text="${totalDeliveredOrders}">
+                    0
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+        <div class="bars">
+
+
+            <div class="bar"
+                 th:each="item:${monthlyRevenue}"
+                 th:style="'height:' + ${item[2]} + '%;'">
+
+
+    <span class="amount"
+          th:text="'৳'+${item[1]}">
+        ৳1000
+    </span>
+
+
+                <span class="month"
+                      th:text="${item[0]}">
+        Jan
+    </span>
+
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+    </section>
+</main>
+
+<script>
+    const items = [
+        {id:'cakes', label:'Manage Cakes', sub:'Add, edit, and price your cakes', icon:'M6 2v20M6 2h6a4 4 0 010 8H6M18 2v20', key:'02'},
+        {id:'customize', label:'Customize Cakes', sub:"Customer custom cake requests with reference photos", icon:'M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z', key:'03'},
+
+        {id:'orders', label:'View Orders', sub:'All incoming customer orders', icon:'M6 2h12l2 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2V7l2-5zM4 7h16', key:'05'},
+        {id:'status', label:'Update Order Status', sub:'Move orders through the kitchen', icon:'M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11', key:'06'},
+        {id:'assign-delivery', label:'Assign Delivery', sub:'Assign a delivery rider to an order', icon:'M3 13h13V6H3zM16 9h4l3 4v4h-7z M7.5 20.3a1.8 1.8 0 100-3.6 1.8 1.8 0 000 3.6zM17.5 20.3a1.8 1.8 0 100-3.6 1.8 1.8 0 000 3.6z', key:'07'},
+        {id:'payments', label:'Manage Payments', sub:'Transactions and refunds', icon:'M2 7h20v11a2 2 0 01-2 2H4a2 2 0 01-2-2V7zM2 10h20M6 15h4', key:'08'},
+        {id:'reports', label:'View Reports', sub:'Sales performance and delivery updates', icon:'M3 3v18h18M7 15l4-5 3 3 5-7', key:'09'},
+    ];
+
+    const nav = document.getElementById('nav');
+    items.forEach(it=>{
+        const div = document.createElement('div');
+        div.className = 'nav-item';
+        div.id = 'nav-'+it.id;
+        div.onclick = ()=>goTo(it.id);
+        div.innerHTML = `<span class="nav-icon"><svg viewBox="0 0 24 24"><path d="${it.icon}" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span>${it.label}</span>`;
+        nav.appendChild(div);
+    });
+
+    function goTo(id){
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+        document.getElementById('page-'+id).classList.add('active');
+        document.getElementById('nav-'+id).classList.add('active');
+        const meta = items.find(i=>i.id===id);
+        document.getElementById('pageTitle').textContent = meta.label;
+        document.getElementById('pageSub').textContent = meta.sub;
+    }
+    const adminUrlParameters =
+        new URLSearchParams(window.location.search);
+
+
+    const requestedSection =
+        adminUrlParameters.get('section');
+
+    const validSection =
+        items.some(item => item.id === requestedSection)
+            ? requestedSection
+            : 'cakes';
+
+    goTo(validSection);
+
+    function switchReportTab(tab){
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+        document.getElementById('report-sales').style.display = tab==='sales' ? 'block' : 'none';
+        document.getElementById('report-delivery').style.display = tab==='delivery' ? 'block' : 'none';
+    }
+
+    function tick(){
+        const d = new Date();
+        document.getElementById('clock').textContent = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) + '  ·  ' + d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    }
+    tick(); setInterval(tick, 30000);
+</script>
+<script>
+    const cakeSearchInput =
+        document.getElementById('cakeSearchInput');
+
+    const cakeTableBody =
+        document.getElementById('cakeTableBody');
+
+    const noCakeSearchRow =
+        document.getElementById('noCakeSearchRow');
+
+    function normalizeCakeText(value) {
+        return (value || '')
+            .toLowerCase()
+            .trim();
+    }
+
+    function sortCakeRows() {
+        const searchText = normalizeCakeText(
+            cakeSearchInput.value
+        );
+
+        const cakeRows = Array.from(
+            cakeTableBody.querySelectorAll(
+                '.cake-data-row'
+            )
+        );
+
+        /*
+         * Search matching score:
+         *
+         * 0 = নাম search text দিয়ে শুরু হয়েছে
+         * 1 = নামের মধ্যে search text আছে
+         * 2 = search text নেই
+         */
+        cakeRows.sort(function (firstRow, secondRow) {
+            const firstName = normalizeCakeText(
+                firstRow.dataset.cakeName
+            );
+
+            const secondName = normalizeCakeText(
+                secondRow.dataset.cakeName
+            );
+
+            const firstScore =
+                getCakeSearchScore(
+                    firstName,
+                    searchText
+                );
+
+            const secondScore =
+                getCakeSearchScore(
+                    secondName,
+                    searchText
+                );
+
+            if (firstScore !== secondScore) {
+                return firstScore - secondScore;
+            }
+
+            return firstName.localeCompare(secondName);
+        });
+
+        cakeRows.forEach(function (row) {
+            cakeTableBody.insertBefore(
+                row,
+                noCakeSearchRow
+            );
+        });
+
+        /*
+         * Matching Cake-গুলো দেখাবে।
+         * Search empty হলে সব Cake alphabetically দেখাবে।
+         */
+        let matchingCakeCount = 0;
+
+        cakeRows.forEach(function (row) {
+            const cakeName = normalizeCakeText(
+                row.dataset.cakeName
+            );
+
+            const matches =
+                searchText === '' ||
+                cakeName.includes(searchText);
+
+            row.style.display =
+                matches ? '' : 'none';
+
+            if (matches) {
+                matchingCakeCount++;
+            }
+        });
+
+        noCakeSearchRow.style.display =
+            searchText !== '' &&
+            matchingCakeCount === 0
+                ? ''
+                : 'none';
+    }
+
+    function getCakeSearchScore(
+        cakeName,
+        searchText
+    ) {
+        if (searchText === '') {
+            return 0;
+        }
+
+        if (cakeName.startsWith(searchText)) {
+            return 0;
+        }
+
+        if (cakeName.includes(searchText)) {
+            return 1;
+        }
+
+        return 2;
+    }
+
+    if (cakeSearchInput && cakeTableBody) {
+        cakeSearchInput.addEventListener(
+            'input',
+            sortCakeRows
+        );
+
+        /*
+         * Page load-এর সময়ও Cake name
+         * alphabetically সাজাবে।
+         */
+        sortCakeRows();
+    }
+</script>
+<script>
+    const adminMessage =
+        document.querySelector('.admin-message');
+
+    if (adminMessage) {
+
+        setTimeout(function () {
+
+            adminMessage.classList.add('hide');
+
+            setTimeout(function () {
+                adminMessage.remove();
+            }, 400);
+
+        }, 4000);
+    }
+</script>
+
+<script>
+
+
+    const orderSearchInput =
+        document.getElementById(
+            "orderSearchInput"
+        );
+
+
+    const orderRows =
+        document.querySelectorAll(
+            "#orderTableBody tr"
+        );
+
+
+    const noOrderFound =
+        document.getElementById(
+            "noOrderFound"
+        );
+
+
+
+    orderSearchInput.addEventListener(
+        "input",
+        function(){
+
+
+            let searchValue =
+                this.value
+                    .toLowerCase()
+                    .trim();
+
+
+
+            let found = false;
+
+
+
+            orderRows.forEach(row => {
+
+
+
+                // skip message row
+
+                if(row.id === "noOrderFound"){
+                    return;
+                }
+
+
+
+                let orderId =
+                    row.dataset.orderId;
+
+
+
+                let customer =
+                    row.dataset.customer
+                        .toLowerCase();
+
+
+
+
+                if(
+                    orderId.includes(searchValue)
+                    ||
+                    customer.includes(searchValue)
+                ){
+
+
+                    row.style.display="";
+
+
+                    found = true;
+
+
+                }
+
+                else{
+
+
+                    row.style.display="none";
+
+
+                }
+
+            });
+
+            if(searchValue !== "" && !found){
+
+
+                noOrderFound.style.display="";
+
+
+                noOrderFound.querySelector("td").innerText =
+                    "There is no " + searchValue + " number order.";
+
+
+            }
+
+            else{
+                noOrderFound.style.display="none";
+
+
+            }
+        });
+</script>
+
+<script>
+
+    const paymentSearchInput =
+        document.getElementById(
+            "paymentSearchInput"
+        );
+
+
+    const paymentRows =
+        document.querySelectorAll(
+            "#paymentTableBody tr"
+        );
+
+
+    const noPaymentFound =
+        document.getElementById(
+            "noPaymentFound"
+        );
+
+
+
+    paymentSearchInput.addEventListener(
+        "input",
+        function(){
+
+
+            let search =
+                this.value
+                    .toLowerCase()
+                    .trim();
+
+
+
+            let found = false;
+
+
+
+            paymentRows.forEach(row=>{
+
+
+                if(row.id === "noPaymentFound"){
+                    return;
+                }
+
+
+
+                let method =
+                    (row.dataset.method || "")
+                        .toLowerCase();
+
+
+
+                if(method.includes(search)){
+
+
+                    row.style.display="";
+
+                    found=true;
+
+                }
+
+                else{
+
+
+                    row.style.display="none";
+
+                }
+
+
+            });
+
+
+
+            if(search !== "" && !found){
+
+
+                noPaymentFound.style.display="";
+
+
+                noPaymentFound.querySelector("td")
+                    .innerText =
+                    "No payment found for " + search;
+
+
+            }
+
+            else{
+
+
+                noPaymentFound.style.display="none";
+            }
+        });
+</script>
+</body>
+</html>

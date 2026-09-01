@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Deliveryman Dashboard | Heavenly Bakehouse
+    </title>
+
+
+    <link rel="stylesheet"
+          th:href="@{/deliveryman.css}">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+          rel="stylesheet">
+
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard">
+
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            Heavenly Bakehouse
+
+            <span>
+        Delivery Panel
+    </span>
+
+        </div>
+
+
+
+        <nav>
+
+
+            <a class="active"
+               href="/cakeshop/deliveryman">
+
+                Dashboard
+            </a>
+
+
+
+            <a href="#profile">
+
+                Profile
+            </a>
+
+
+
+
+            <form th:action="@{/logout}"
+                  method="post">
+
+                <button class="logout">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </nav>
+
+
+    </aside>
+
+
+    <!-- ================= CONTENT ================= -->
+
+
+    <main class="content">
+
+
+
+        <header>
+
+
+            <h1>
+
+                Hi
+
+                <span th:text="${deliveryman.name}">
+Delivery Man
+</span>
+
+                , Welcome to Heavenly Bakehouse
+
+
+            </h1>
+
+
+            <p>
+
+                Manage your assigned deliveries and profile information.
+
+            </p>
+
+
+        </header>
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+
+        <section id="dashboard">
+
+
+            <h2>
+                Dashboard
+            </h2>
+
+
+
+            <div class="summary">
+
+
+                <div class="box">
+
+                    <h3>
+                        Assigned Orders
+                    </h3>
+
+                    <strong>
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="box">
+
+                    <h3>
+                        Completed
+                    </h3>
+
+                    <strong>
+                        0
+                    </strong>
+
+                </div>
+
+
+
+
+                <div class="box">
+
+                    <h3>
+                        Availability
+                    </h3>
+
+
+                    <strong>
+                        Available
+                    </strong>
+
+
+                </div>
+
+            </div>
+
+            <div class="order-card">
+
+
+                <h3>
+                    My Assigned Deliveries
+                </h3>
+
+
+
+                <table>
+
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Order ID
+                        </th>
+
+
+                        <th>
+                            Customer
+                        </th>
+
+
+                        <th>
+                            Phone
+                        </th>
+
+
+                        <th>
+                            Address
+                        </th>
+
+
+                        <th>
+                            Delivery Date
+                        </th>
+
+
+                        <th>
+                            Status
+                        </th>
+                        
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+                    <tr th:each="order:${assignedOrders}">
+
+
+                        <td th:text="'#'+${order.id}">
+                            #1
+                        </td>
+
+
+
+                        <td th:text="${order.customer.name}">
+                            Customer
+                        </td>
+
+
+
+                        <td th:text="${order.phone}">
+                            Phone
+                        </td>
+
+
+
+                        <td th:text="${order.address}">
+                            Address
+                        </td>
+                        
+                        <td th:text="${order.deliveryDate}">
+                            Date
+                        </td>
+
+                        <td>
+
+<span class="badge"
+      th:text="${order.deliveryStatus}">
+PREPARING
+</span>
+
+                        </td>
+
+                        <td>
+
+
+                            <form th:if="${order.deliveryAssignStatus == 'PENDING_CONFIRMATION'}"
+                                  th:action="@{/cakeshop/deliveryman/confirm/{id}(id=${order.id})}"
+                                  method="post">
+
+
+                                <button class="confirm-btn">
+
+                                    Confirm delivery
+
+                                </button>
+
+
+                            </form>
+
+
+
+                            <span th:if="${order.deliveryAssignStatus == 'CONFIRMED'}"
+                                  class="badge">
+
+Delivery Confirmed ✓
+
+</span>
+
+
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+        </section>
+
+        <!-- ================= PROFILE ================= -->
+
+
+
+        <section id="profile"
+                 class="profile-section">
+
+
+
+            <h2>
+                My Profile
+            </h2>
+
+
+            <div class="profile-card">
+
+
+
+                <div class="profile-image">
+
+
+                    <img th:if="${deliveryman.profilePicture != null}"
+                         th:src="${deliveryman.profilePicture}">
+
+                    <div th:if="${deliveryman.profilePicture == null}"
+                         class="placeholder">
+
+                        👤
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-info">
+
+
+                    <h3 th:text="${deliveryman.name}">
+                        Delivery Man Name
+                    </h3>
+
+
+
+                    <p>
+
+                        Email:
+
+                        <span th:text="${deliveryman.email}">
+email@gmail.com
+</span>
+
+                    </p>
+
+                    <p>
+
+                        Phone:
+
+                        <span th:text="${deliveryman.phonenumber}">
+01XXXXXXXXX
+</span>
+
+
+                    </p>
+
+                    <!-- Availability Status -->
+
+
+                    <form th:action="@{/cakeshop/deliveryman/profile/upload}"
+                          method="post"
+                          enctype="multipart/form-data">
+
+
+                        <input type="file"
+                               name="imageFile"
+                               accept="image/*"
+                               required>
+
+
+                        <button type="submit">
+
+                            Upload Picture
+
+                        </button>
+
+
+                    </form>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+</div>
+
+</body>
+
+
+</html>

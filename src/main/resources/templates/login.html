@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Heavenly Bakehouse — Log In</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Caveat:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+          rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" th:href="@{/login.css}">
+</head>
+
+<body>
+
+<div class="wrap">
+
+    <!-- HERO PANEL -->
+    <div class="hero">
+
+        <div class="hero-top">
+
+            <div class="crest">
+                Est. Sweetness
+            </div>
+
+            <h1>
+                Welcome back to<br>
+                <span class="script">Heavenly</span> Bakehouse
+            </h1>
+
+            <p class="tag">
+                Sign in to manage your orders, save your favourite flavours,
+                and pick up right where your last slice left off.
+            </p>
+
+        </div>
+
+
+        <!-- CAKE IMAGE -->
+        <div class="cake-stage">
+
+            <div class="photo-frame">
+                <!-- Add your cake image here -->
+                <img th:src="@{/images/login-cakes.png}"
+                     src="/images/login-cakes.png"
+                     alt="Assorted chocolate and vanilla cakes">
+
+
+                <div class="tag-chip">
+                    Freshly Baked
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- QUOTE -->
+        <div class="hero-quote">
+
+            “Every layer, hand-piped.
+            Every order, made to feel like a celebration.”
+
+            <span>
+                — The Bakehouse Kitchen
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- FORM PANEL -->
+    <div class="form-panel">
+
+        <div class="form-card">
+
+            <div class="eyebrow">
+                Member Login
+            </div>
+
+            <h2>
+                Good to see you again
+            </h2>
+
+            <p class="lead">
+                Enter your details to access your Heavenly Bakehouse account.
+            </p>
+
+            <div id="logoutMessage"
+                    class="logout-success-message"
+                 th:if="${param.logout}">
+                You have been logged out successfully.
+            </div>
+            
+            <!-- LOGIN FORM -->
+            <form th:action="@{/login}" method="post">
+
+                <!-- Login Error -->
+                <div th:if="${param.error}" class="error">
+                    Invalid username or password
+                </div>
+
+
+                <!-- EMAIL -->
+                <div class="field">
+
+                    <label for="email">
+                        Email address
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 4h16v16H4zM4 4l8 8 8-8"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+
+                        <input
+                                type="email"
+                                id="email"
+                                name="username"
+                                placeholder="you@example.com"
+                                required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+                <div class="field">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M6 11V7a6 6 0 0112 0v4M5 11h14v9H5z"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+
+                        <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="••••••••"
+                                required>
+
+                        <!-- SHOW/HIDE PASSWORD -->
+                        <button
+                                type="button"
+                                class="toggle-pass"
+                                onclick="togglePassword()"
+                                aria-label="Show password">
+
+                            <!-- Eye -->
+                            <svg class="eye-on"
+                                 viewBox="0 0 24 24">
+
+                                <path
+                                        d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"/>
+
+                                <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="3.2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"/>
+
+                            </svg>
+
+
+                            <!-- Eye Off -->
+                            <svg class="eye-off"
+                                 viewBox="0 0 24 24">
+
+                                <path
+                                        d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-7-11-7a20.6 20.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 7 11 7a20.6 20.6 0 01-2.65 3.53M14.12 14.12a3.2 3.2 0 01-4.24-4.24"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"/>
+
+                                <path
+                                        d="M1 1l22 22"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"/>
+
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REMEMBER + FORGOT -->
+                <div class="row-between">
+
+                    <label class="remember">
+
+                        <input type="checkbox">
+
+                        Remember me
+
+                    </label>
+
+
+                    <a href="#" class="forgot">
+                        Forgot password?
+                    </a>
+
+                </div>
+
+
+                <!-- LOGIN BUTTON -->
+                <button
+                        type="submit"
+                        class="btn-login">
+
+                    Log In
+
+                </button>
+
+            </form>
+
+
+            <!-- SIGN UP -->
+            <p class="signup-note">
+
+                Don't have an account?
+
+                <a href="/registration">
+                    Sign up for free
+                </a>
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- PASSWORD SCRIPT -->
+<script>
+
+    function togglePassword() {
+
+        const input =
+            document.getElementById('password');
+
+        const btn =
+            document.querySelector('.toggle-pass');
+
+        const showing =
+            input.type === 'text';
+
+        input.type =
+            showing ? 'password' : 'text';
+
+        btn.classList.toggle(
+            'is-visible',
+            !showing
+        );
+
+        btn.setAttribute(
+            'aria-label',
+            showing ? 'Show password' : 'Hide password'
+        );
+    }
+</script>
+
+<script>
+    function togglePassword() {
+        const input = document.getElementById('password');
+        const btn = document.querySelector('.toggle-pass');
+        const showing = input.type === 'text';
+
+        input.type = showing ? 'password' : 'text';
+        btn.classList.toggle('is-visible', !showing);
+
+        btn.setAttribute(
+            'aria-label',
+            showing ? 'Show password' : 'Hide password'
+        );
+    }
+
+    // ৪ সেকেন্ড পর logout message সরাবে
+    document.addEventListener('DOMContentLoaded', function () {
+        const logoutMessage = document.getElementById('logoutMessage');
+
+        if (logoutMessage) {
+            setTimeout(function () {
+                logoutMessage.style.display = 'none';
+
+                // remove URL  ?logout=true 
+                window.history.replaceState(
+                    {},
+                    document.title,
+                    window.location.pathname
+                );
+            }, 4000);
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Customize Cake Order
+    </title>
+
+    <link rel="stylesheet"
+          th:href="@{/customize.css}">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="header">
+
+        <h1>
+            Create Your Custom Cake
+        </h1>
+
+        <p>
+            Upload your dream cake design and tell us your requirements.
+            please order before 2 days otherwise it will be rejected.
+        </p>
+
+    </div>
+    <div th:if="${successMessage}"
+         style="
+     background:#fff3cd;
+     color:#856404;
+     padding:15px;
+     border-radius:10px;
+     margin-bottom:20px;
+     font-weight:600;
+     ">
+
+    <span th:text="${successMessage}">
+    </span>
+
+    </div>
+    <div class="card">
+
+
+        <form th:action="@{/cakeshop/customize/save}"
+              method="post"
+              enctype="multipart/form-data"
+              onsubmit="return validateCustomizeForm()"
+              autocomplete="off">
+
+
+
+            <label>
+                Upload Cake Design
+            </label>
+
+
+            <div class="upload-box">
+
+
+                <img id="previewImage"
+                     src=""
+                     alt="Preview"
+                     style="
+         display:none;
+         width:250px;
+         height:200px;
+         object-fit:cover;
+         border-radius:15px;
+         margin:20px auto;">
+
+
+                <input type="file"
+                       name="imageFile"
+                       accept="image/*"
+                       onchange="showPreview(this)">
+
+
+            </div>
+
+
+
+
+            <label>
+                Describe Your Cake
+            </label>
+
+
+            <textarea
+                    name="description"
+                    placeholder="Example: 3 tier chocolate cake with flowers...">
+    </textarea>
+
+
+
+
+
+            <label>
+                Phone Number
+            </label>
+
+
+            <input type="text"
+                   name="phone"
+                   placeholder="01XXXXXXXXX">
+
+
+
+
+
+            <label>
+                Delivery Address
+            </label>
+
+
+            <textarea
+                    name="address"
+                    placeholder="Enter your full address">
+    </textarea>
+
+
+
+
+
+            <label>
+                Delivery Date
+            </label>
+
+
+            <input type="text"
+                   id="deliveryDate"
+                   name="deliveryDate"
+                   placeholder="Select delivery date"
+                   autocomplete="off"
+                   onfocus="this.type='date'"
+                   onblur="if (!this.value) this.type='text'"
+                   required>
+
+
+            <button type="submit">
+
+                Submit Custom Order
+
+            </button>
+
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+<script>
+
+    function showPreview(input){
+
+        const image =
+            document.getElementById("previewImage");
+
+
+        if(input.files && input.files[0]){
+
+
+            image.src =
+                URL.createObjectURL(input.files[0]);
+
+
+            image.style.display = "block";
+
+
+        }
+
+    }
+
+</script>
+
+<script>
+
+    function validateCustomizeForm(){
+
+
+        const image =
+            document.querySelector('input[name="imageFile"]').value;
+
+
+        const description =
+            document.querySelector('textarea[name="description"]').value.trim();
+
+
+        const phone =
+            document.querySelector('input[name="phone"]').value.trim();
+
+
+        const address =
+            document.querySelector('textarea[name="address"]').value.trim();
+
+
+        const deliveryDate =
+            document.querySelector('input[name="deliveryDate"]').value;
+
+
+
+        if(image === ""){
+
+            alert("Please upload your cake design picture.");
+
+            return false;
+
+        }
+        
+        if(description === ""){
+
+            alert("Please describe your cake.");
+
+            return false;
+
+        }
+
+        if(phone === ""){
+
+            alert("Please enter your phone number.");
+
+            return false;
+
+        }
+        if(address === ""){
+
+            alert("Please enter your delivery address.");
+
+            return false;
+
+        }
+
+        if(deliveryDate === ""){
+
+            alert("Please select delivery date.");
+
+            return false;
+
+        }
+        return true;
+
+    }
+
+</script>
+
+<script>
+
+    const today = new Date();
+
+    const yyyy = today.getFullYear();
+
+    const mm = String(today.getMonth() + 1)
+        .padStart(2,'0');
+
+    const dd = String(today.getDate())
+        .padStart(2,'0');
+
+
+    const minDate =
+        yyyy + "-" + mm + "-" + dd;
+
+
+    document.getElementById("deliveryDate")
+        .setAttribute(
+            "min",
+            minDate
+        );
+
+
+</script>
+
+<script>
+
+    window.onload = function(){
+
+        if(window.history.replaceState){
+
+            window.history.replaceState(
+                null,
+                null,
+                window.location.href
+            );
+
+        }
+
+    }
+
+</script>
+
+</body>
+
+</html>

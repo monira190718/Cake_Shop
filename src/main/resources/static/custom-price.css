@@ -1,0 +1,190 @@
+body{
+
+    margin:0;
+
+    background:#fff8f1;
+
+    font-family:'Inter', sans-serif;
+
+    color:#3b1025;
+
+}
+
+
+
+.page-container{
+
+    width:700px;
+
+    margin:60px auto;
+
+}
+
+
+
+.header{
+
+    margin-bottom:30px;
+
+}
+
+
+
+.header h1{
+
+    font-family:Georgia, serif;
+
+    font-size:38px;
+
+    margin-bottom:10px;
+
+}
+
+
+
+.header p{
+
+    color:#8b6f78;
+
+    font-size:16px;
+
+}
+
+
+
+
+.price-card{
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:22px;
+
+
+    box-shadow:
+            0 10px 30px rgba(0,0,0,0.08);
+
+}
+
+
+
+.form-group{
+
+    margin-bottom:25px;
+
+}
+
+
+
+label{
+
+    display:block;
+
+    font-weight:600;
+
+    margin-bottom:10px;
+
+    font-size:16px;
+
+}
+
+
+
+.price-input{
+
+    display:flex;
+
+    align-items:center;
+
+    border:1px solid #ead5d8;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+}
+
+
+
+.price-input span{
+
+    padding:15px;
+
+    background:#f9e8ed;
+
+    color:#9b2f55;
+
+    font-weight:bold;
+
+}
+
+
+
+.price-input input{
+
+    border:none;
+
+    flex:1;
+
+    padding:15px;
+
+    font-size:16px;
+
+    outline:none;
+
+}
+
+
+
+
+
+textarea{
+
+    width:100%;
+
+    padding:15px;
+
+    border:1px solid #ead5d8;
+
+    border-radius:12px;
+
+    resize:none;
+
+    font-size:15px;
+
+    line-height:1.6;
+
+    box-sizing:border-box;
+
+}
+
+
+
+button{
+
+    background:#9b2f55;
+
+    color:white;
+
+    border:none;
+
+    padding:15px 30px;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+    background:#7d2143;
+
+}

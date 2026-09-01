@@ -1,0 +1,731 @@
+/* =========================================
+   HEAVENLY BAKEHOUSE
+   REGISTRATION PAGE
+========================================= */
+:root {
+    --plum: #3B1425;
+    --plum-2: #4E1B32;
+    --berry: #8C2F4D;
+    --blush: #F6DCE2;
+    --cream: #FFF8F1;
+    --gold: #C9A227;
+    --gold-light: #E4C567;
+    --ink: #3B2A2E;
+    --ink-soft: #8A7A7C;
+    --line: #EDE2DE;
+}
+
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================
+   BODY
+========================================= */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+}
+
+
+/* =========================================
+   MAIN WRAPPER
+========================================= */
+
+.wrap {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+
+/* =========================================
+   LEFT HERO PANEL
+========================================= */
+
+.hero {
+    flex: 1 1 50%;
+    position: relative;
+
+    background:
+            radial-gradient(
+                    120% 120% at 15% 10%,
+                    var(--plum-2) 0%,
+                    var(--plum) 55%,
+                    #2A0E1B 100%
+            );
+
+    color: var(--blush);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 56px;
+
+    overflow: hidden;
+}
+
+
+/* Decorative dots */
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background-image:
+            radial-gradient(
+                    circle,
+                    rgba(255, 255, 255, 0.10) 1.5px,
+                    transparent 1.5px
+            );
+
+    background-size: 26px 26px;
+
+    opacity: 0.5;
+
+    pointer-events: none;
+}
+
+
+/* Decorative circle */
+
+.hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 330px;
+    height: 330px;
+
+    border: 1px solid rgba(228, 197, 103, 0.18);
+
+    border-radius: 50%;
+
+    right: -120px;
+    bottom: -100px;
+}
+
+
+/* Hero content */
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+
+    max-width: 480px;
+}
+
+
+/* =========================================
+   CREST
+========================================= */
+
+.crest {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: var(--gold-light);
+
+    border: 1px solid rgba(228, 197, 103, 0.4);
+
+    padding: 7px 15px;
+
+    border-radius: 99px;
+}
+
+
+/* =========================================
+   HERO HEADING
+========================================= */
+
+.hero h1 {
+    font-family: 'Fraunces', serif;
+
+    font-weight: 600;
+
+    font-size: 48px;
+
+    line-height: 1.08;
+
+    margin-top: 28px;
+}
+
+
+.hero h1 .script {
+    font-family: 'Caveat', cursive;
+
+    font-weight: 700;
+
+    font-size: 1.35em;
+
+    color: var(--gold-light);
+
+    display: inline-block;
+
+    transform: rotate(-2deg);
+}
+
+
+/* =========================================
+   HERO DESCRIPTION
+========================================= */
+
+.hero-text {
+    margin-top: 20px;
+
+    font-size: 15px;
+
+    line-height: 1.8;
+
+    color: rgba(246, 220, 226, 0.75);
+
+    max-width: 390px;
+}
+
+
+/* =========================================
+   SWEET DECORATIONS
+========================================= */
+
+.sweet-decoration {
+    position: relative;
+
+    margin-top: 55px;
+
+    display: flex;
+
+    gap: 20px;
+}
+
+
+.sweet {
+    width: 65px;
+    height: 65px;
+
+    border: 1px solid rgba(228, 197, 103, 0.3);
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 27px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    box-shadow:
+            0 15px 30px rgba(0, 0, 0, 0.15);
+
+    transition: transform 0.2s ease;
+}
+
+
+.sweet:hover {
+    transform: translateY(-5px) rotate(-2deg);
+}
+
+
+/* =========================================
+   HERO QUOTE
+========================================= */
+
+.hero-quote {
+    position: absolute;
+
+    bottom: 40px;
+
+    left: 56px;
+
+    border-top: 1px solid rgba(246, 220, 226, 0.18);
+
+    padding-top: 18px;
+
+    font-family: 'Fraunces', serif;
+
+    font-style: italic;
+
+    font-size: 15px;
+
+    color: rgba(246, 220, 226, 0.85);
+
+    line-height: 1.6;
+
+    max-width: 390px;
+}
+
+
+.hero-quote span {
+    display: block;
+
+    margin-top: 8px;
+
+    font-family: 'Inter', sans-serif;
+
+    font-style: normal;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+
+    color: var(--gold-light);
+}
+
+
+/* =========================================
+   RIGHT FORM PANEL
+========================================= */
+
+.form-panel {
+    flex: 1 1 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 40px;
+
+    background: var(--cream);
+}
+
+
+.form-card {
+    width: 100%;
+
+    max-width: 410px;
+}
+
+
+/* =========================================
+   FORM HEADER
+========================================= */
+
+.eyebrow {
+    font-family: 'Inter', sans-serif;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: var(--berry);
+
+    margin-bottom: 10px;
+}
+
+
+.form-card h2 {
+    font-family: 'Fraunces', serif;
+
+    font-weight: 600;
+
+    font-size: 34px;
+
+    color: var(--plum);
+}
+
+
+.lead {
+    margin-top: 8px;
+
+    font-size: 14px;
+
+    color: var(--ink-soft);
+
+    margin-bottom: 28px;
+}
+
+
+/* =========================================
+   FORM FIELD
+========================================= */
+
+.field {
+    margin-bottom: 17px;
+}
+
+
+.field label {
+    display: block;
+
+    font-size: 12.5px;
+
+    font-weight: 700;
+
+    color: var(--ink);
+
+    margin-bottom: 7px;
+}
+
+
+/* =========================================
+   INPUT
+========================================= */
+
+.input-wrap {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+}
+
+
+.input-icon {
+    position: absolute;
+
+    left: 14px;
+
+    font-size: 15px;
+
+    color: var(--ink-soft);
+
+    pointer-events: none;
+}
+
+
+.input-wrap input {
+    width: 100%;
+
+    padding: 13px 42px 13px 40px;
+
+    border: 1.5px solid var(--line);
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    font-family: 'Inter', sans-serif;
+
+    background: #fff;
+
+    color: var(--ink);
+
+    outline: none;
+
+    transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+
+.input-wrap input::placeholder {
+    color: #C9B9BA;
+}
+
+
+.input-wrap input:focus {
+    border-color: var(--berry);
+
+    box-shadow:
+            0 0 0 3px rgba(140, 47, 77, 0.12);
+}
+
+
+/* =========================================
+   PASSWORD TOGGLE
+========================================= */
+
+.toggle-pass {
+    position: absolute;
+
+    right: 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 30px;
+
+    height: 30px;
+
+    cursor: pointer;
+
+    background: none;
+
+    border: none;
+
+    color: var(--ink-soft);
+
+    font-size: 16px;
+
+    border-radius: 6px;
+}
+
+
+.toggle-pass:hover {
+    background: rgba(140, 47, 77, 0.08);
+
+    color: var(--berry);
+}
+
+
+/* =========================================
+   TERMS
+========================================= */
+
+.terms {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 8px;
+
+    margin: 5px 0 22px;
+
+    font-size: 12.5px;
+
+    color: var(--ink-soft);
+
+    line-height: 1.5;
+}
+
+
+.terms input {
+    margin-top: 3px;
+
+    accent-color: var(--berry);
+}
+
+
+.terms a {
+    color: var(--berry);
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.terms a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   REGISTER BUTTON
+========================================= */
+
+.btn-register {
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    var(--berry),
+                    #6E2440
+            );
+
+    color: #fff;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 14.5px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+
+    box-shadow:
+            0 10px 24px -8px rgba(140, 47, 77, 0.55);
+
+    transition:
+            transform 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+
+.btn-register:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+            0 14px 28px -8px rgba(140, 47, 77, 0.6);
+}
+
+
+.btn-register:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================
+   LOGIN LINK
+========================================= */
+
+.login-note {
+    text-align: center;
+
+    margin-top: 25px;
+
+    font-size: 13.5px;
+
+    color: var(--ink-soft);
+}
+
+
+.login-note a {
+    color: var(--berry);
+
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+.login-note a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 900px) {
+
+    .wrap {
+        flex-direction: column;
+    }
+
+    .hero {
+        min-height: 380px;
+
+        padding: 45px 32px;
+    }
+
+    .hero h1 {
+        font-size: 38px;
+    }
+
+    .sweet-decoration {
+        margin-top: 30px;
+    }
+
+    .hero-quote {
+        display: none;
+    }
+
+    .form-panel {
+        padding: 45px 24px 60px;
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .hero {
+        min-height: 330px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .sweet {
+        width: 55px;
+        height: 55px;
+    }
+
+    .form-card h2 {
+        font-size: 30px;
+    }
+}
+
+/* new */
+/* ROLE SELECT */
+
+.input-wrap select {
+    width: 100%;
+    padding: 13px 14px 13px 40px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+    color: var(--ink);
+    outline: none;
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    transition: border-color .15s ease,
+    box-shadow .15s ease;
+}
+
+/* Focus */
+
+.input-wrap select:focus {
+    border-color: var(--berry);
+    box-shadow: 0 0 0 3px rgba(140,47,77,0.12);
+}
+
+/* Options */
+
+.input-wrap select option {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: #fff;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-size: 18px;
+    color: var(--ink-soft);
+
+    pointer-events: none;
+}
+
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}

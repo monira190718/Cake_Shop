@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${cake.id == null
+        ? 'Add Cake'
+        : 'Edit Cake'}">
+        Cake Form
+    </title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --wine: #902a4f;
+            --wine-dark: #421122;
+            --cream: #fff8f2;
+            --pink: #f8e0e8;
+            --white: #ffffff;
+            --ink: #35101c;
+            --muted: #806c73;
+            --border: #ead9d5;
+            --danger: #a92540;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 42px 18px;
+            color: var(--ink);
+            font-family: "Inter", sans-serif;
+            background:
+                    radial-gradient(
+                            circle at top right,
+                            #f6dce5,
+                            transparent 36%
+                    ),
+                    var(--cream);
+        }
+
+        .page-container {
+            width: 100%;
+            max-width: 940px;
+            margin: auto;
+        }
+
+        .back-button {
+            display: inline-flex;
+            margin-bottom: 20px;
+            color: var(--wine);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .form-card {
+            overflow: hidden;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            box-shadow:
+                    0 22px 60px rgba(66, 17, 34, 0.12);
+        }
+
+        .form-header {
+            padding: 30px 36px;
+            color: white;
+            background: linear-gradient(
+                    135deg,
+                    var(--wine-dark),
+                    var(--wine)
+            );
+        }
+
+        .form-header h1 {
+            margin: 0 0 8px;
+            font-family: "Fraunces", serif;
+            font-size: 36px;
+        }
+
+        .form-header p {
+            margin: 0;
+            color: rgba(255,255,255,0.78);
+        }
+
+        .error-message {
+            margin: 24px 36px 0;
+            padding: 14px 16px;
+            color: #8b1e36;
+            background: #fee8ed;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 38px;
+            padding: 36px;
+        }
+
+        .field {
+            margin-bottom: 21px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required {
+            color: var(--danger);
+        }
+
+        .control {
+            width: 100%;
+            height: 49px;
+            padding: 0 15px;
+            color: var(--ink);
+            background: #fffdfb;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            outline: none;
+            font: inherit;
+        }
+
+        .control:focus {
+            border-color: var(--wine);
+            box-shadow:
+                    0 0 0 4px rgba(144, 42, 79, 0.10);
+        }
+
+        .price-field {
+            position: relative;
+        }
+
+        .currency {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: var(--wine);
+            font-weight: 700;
+        }
+
+        .price-field input {
+            padding-left: 40px;
+        }
+
+        .upload-area {
+            display: flex;
+            min-height: 315px;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-align: center;
+            background: #fffaf7;
+            border: 2px dashed #d8b6c1;
+            border-radius: 17px;
+            transition: 0.2s ease;
+        }
+
+        .upload-area:hover {
+            background: #fff2f6;
+            border-color: var(--wine);
+        }
+
+        .upload-icon {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 48px;
+        }
+
+        .upload-title {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--wine-dark);
+            font-weight: 700;
+        }
+
+        .upload-help {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        #imagePreview {
+            display: none;
+            width: 100%;
+            max-height: 295px;
+            object-fit: contain;
+            border-radius: 13px;
+        }
+
+        .replace-text {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            padding: 22px 36px;
+            background: #fffaf7;
+            border-top: 1px solid var(--border);
+        }
+
+        .button {
+            display: inline-flex;
+            min-height: 47px;
+            padding: 0 23px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 11px;
+            font: inherit;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .primary-button {
+            color: white;
+            background: var(--wine);
+            border: none;
+            box-shadow:
+                    0 9px 22px rgba(144, 42, 79, 0.22);
+        }
+
+        .primary-button:hover {
+            background: #76203f;
+        }
+
+        .cancel-button {
+            color: var(--wine-dark);
+            background: white;
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 760px) {
+            body {
+                padding: 18px 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                padding: 24px 20px;
+            }
+
+            .form-header {
+                padding: 25px 20px;
+            }
+
+            .form-header h1 {
+                font-size: 30px;
+            }
+
+            .error-message {
+                margin: 20px 20px 0;
+            }
+
+            .form-actions {
+                padding: 20px;
+            }
+        }
+        .upload-area.upload-error {
+            background: #fff0f3;
+            border-color: #d71945;
+            box-shadow:
+                    0 0 0 4px rgba(215, 25, 69, 0.12);
+            animation: uploadShake 0.35s ease;
+        }
+
+        @keyframes uploadShake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-7px);
+            }
+
+            75% {
+                transform: translateX(7px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-container">
+
+    <a class="back-button"
+       th:href="@{/cakeshop/admin(section='cakes')}">
+        ← Back to Manage Cakes
+    </a>
+
+    <section class="form-card">
+
+        <header class="form-header">
+            <h1 th:text="${cake.id == null
+                ? 'Add New Cake'
+                : 'Edit Cake'}">
+                Add New Cake
+            </h1>
+
+            <p th:text="${cake.id == null
+                ? 'Enter cake information and upload its picture.'
+                : 'Update the cake information or replace its picture.'}">
+            </p>
+        </header>
+
+        <div th:if="${errorMessage}"
+             class="error-message"
+             th:text="${errorMessage}">
+        </div>
+
+        <form   id="cakeForm"
+                th:action="@{/cakeshop/admin/cakes/save}"
+              method="post"
+              enctype="multipart/form-data"
+                autocomplete="off"
+                th:attr="data-edit-mode=${cake.id != null}">
+
+            <!-- Existing ID: Edit-এর জন্য জরুরি -->
+            <input type="hidden"
+                   name="id"
+                   th:value="${cake.id}">
+
+            <div class="form-grid">
+
+                <div>
+                    <div class="field">
+                        <label for="name">
+                            Cake Name
+                            <span class="required">*</span>
+                        </label>
+
+                        <input id="name"
+                               class="control"
+                               type="text"
+                               name="name"
+                               th:value="${cake.name}"
+                               placeholder="Example: Chocolate Cake"
+                               maxlength="150"
+                               required>
+                    </div>
+
+                  </div>
+
+                    <div class="field">
+                        <label for="price">
+                            Price
+                            <span class="required">*</span>
+                        </label>
+
+                        <div class="price-field">
+                            <span class="currency">৳</span>
+
+                            <input id="price"
+                                   class="control"
+                                   type="number"
+                                   name="price"
+                                   th:value="${cake.price}"
+                                   min="0.01"
+                                   step="0.01"
+                                   placeholder="0.00"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="available">
+                            Availability
+                            <span class="required">*</span>
+                        </label>
+
+                        <select id="available"
+                                class="control"
+                                name="available"
+                                required>
+
+                            <option value="true"
+                                    th:selected="${cake.id == null
+                                    or cake.available}">
+                                Available
+                            </option>
+
+                            <option value="false"
+                                    th:selected="${cake.id != null
+                                    and !cake.available}">
+                                Unavailable
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="field">
+                        <label for="imageFile">
+                            Cake Picture
+                            <span class="required">*</span>
+                        </label>
+
+                        <label id="cakeUploadArea"
+                                class="upload-area"
+                               for="imageFile">
+
+                            <div id="uploadPlaceholder">
+                                <span class="upload-icon">🎂</span>
+
+                                <span class="upload-title"
+                                      th:text="${cake.id == null
+                                      ? 'Click to upload picture'
+                                      : 'Click to replace picture'}">
+                                </span>
+
+                                <span class="upload-help">
+                                    JPG, PNG or WEBP · Maximum 5 MB
+                                </span>
+                            </div>
+
+                            <img id="imagePreview"
+                                 th:src="${cake.image}"
+                                 alt="Cake picture preview">
+                        </label>
+
+                        <input id="imageFile"
+                               type="file"
+                               name="imageFile"
+                               accept="image/jpeg,image/png,image/webp"
+                               style="display:none;">
+
+                        <p class="replace-text"
+                           th:if="${cake.id != null}">
+                            The current picture is shown above.
+                            Select another picture only when you
+                            want to replace it.
+                        </p>
+                    </div>
+                </div>
+
+
+
+            <footer class="form-actions">
+                <button type="submit"
+                        class="button primary-button"
+                        th:text="${cake.id == null
+                        ? 'Add Cake'
+                        : 'Save Changes'}">
+                    Add Cake
+                </button>
+
+                <a class="button cancel-button"
+                   th:href="@{/cakeshop/admin(section='cakes')}">
+                    Cancel
+                </a>
+            </footer>
+
+        </form>
+    </section>
+</div>
+<script>
+    /*
+     * প্রয়োজনীয় HTML elements
+     */
+    const cakeForm =
+        document.getElementById('cakeForm');
+
+    const imageFile =
+        document.getElementById('imageFile');
+
+    const imagePreview =
+        document.getElementById('imagePreview');
+
+    const uploadPlaceholder =
+        document.getElementById('uploadPlaceholder');
+
+    const cakeUploadArea =
+        document.getElementById('cakeUploadArea');
+
+    /*
+     * Edit form খুললে existing picture
+     * preview হিসেবে দেখাবে।
+     */
+    const currentImage =
+        imagePreview.getAttribute('src');
+
+    if (
+        currentImage &&
+        currentImage !== 'null' &&
+        currentImage.trim() !== ''
+    ) {
+        imagePreview.style.display = 'block';
+        uploadPlaceholder.style.display = 'none';
+    }
+
+    /*
+     * Add/Edit form-এ নতুন picture নির্বাচন।
+     */
+    imageFile.addEventListener(
+        'change',
+        function () {
+
+            const selectedFile = this.files[0];
+
+            /*
+             * কোনো file select না করলে
+             * আর কিছু করবে না।
+             */
+            if (!selectedFile) {
+                return;
+            }
+
+            const allowedTypes = [
+                'image/jpeg',
+                'image/png',
+                'image/webp'
+            ];
+
+            /*
+             * File type validation
+             */
+            if (!allowedTypes.includes(
+                selectedFile.type
+            )) {
+                alert(
+                    'Only JPG, PNG and WEBP pictures are allowed.'
+                );
+
+                this.value = '';
+                return;
+            }
+
+            /*
+             * Maximum file size 5 MB
+             */
+            if (
+                selectedFile.size >
+                5 * 1024 * 1024
+            ) {
+                alert(
+                    'Picture size cannot exceed 5 MB.'
+                );
+
+                this.value = '';
+                return;
+            }
+
+            /*
+             * Picture সঠিকভাবে select হয়েছে।
+             * তাই upload area-এর red error
+             * design remove হবে।
+             */
+            cakeUploadArea.classList.remove(
+                'upload-error'
+            );
+
+            /*
+             * Selected picture-এর preview।
+             */
+            imagePreview.src =
+                URL.createObjectURL(
+                    selectedFile
+                );
+
+            imagePreview.style.display =
+                'block';
+
+            uploadPlaceholder.style.display =
+                'none';
+        }
+    );
+
+    /*
+     * Add Cake button click/submit validation
+     */
+    cakeForm.addEventListener(
+        'submit',
+        function (event) {
+
+            /*
+             * true হলে Edit page,
+             * false হলে Add page।
+             */
+            const isEditMode =
+                cakeForm.dataset.editMode ===
+                'true';
+
+            const pictureSelected =
+                imageFile.files &&
+                imageFile.files.length > 0;
+
+            /*
+             * Add page-এ picture ছাড়া
+             * submit বন্ধ করবে।
+             *
+             * Edit page-এ নতুন picture না দিলে
+             * existing picture থাকবে।
+             */
+            if (
+                !isEditMode &&
+                !pictureSelected
+            ) {
+                event.preventDefault();
+
+                alert('Please upload picture');
+
+                /*
+                 * Upload box লাল করবে।
+                 */
+                cakeUploadArea.classList.add(
+                    'upload-error'
+                );
+
+                /*
+                 * Upload box-এর কাছে
+                 * automatically নিয়ে যাবে।
+                 */
+                cakeUploadArea.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+                return;
+            }
+
+            /*
+             * Picture থাকলে error design
+             * সরিয়ে form submit করবে।
+             */
+            cakeUploadArea.classList.remove(
+                'upload-error'
+            );
+        }
+    );
+</script>
+
+<script>
+
+    if(window.history.replaceState){
+
+        window.history.replaceState(
+            null,
+            null,
+            window.location.href
+        );
+
+    }
+
+
+    window.addEventListener(
+        "pageshow",
+        function(event){
+
+            if(event.persisted){
+
+                window.location.href =
+                    "/cakeshop/admin?section=cakes";
+
+            }
+
+        }
+    );
+
+
+</script>
+
+
+</body>
+</html>

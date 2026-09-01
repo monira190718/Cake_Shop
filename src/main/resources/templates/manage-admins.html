@@ -1,0 +1,766 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Admins | Heavenly Bakehouse</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/manage-admins.css}">
+    <style>/* ==========================================
+   🚀 HIDDEN ELEMENTS
+   ========================================== */
+    [data-testid="accounts-profile-button"],
+    [data-testid="conversation-options-button"],
+    [aria-description="Share sheet"],
+    #modal-account-payment,
+    #modal-conversation-history-rate-limit,
+    a[href="/library"],
+    a[href*="/invite"],
+    a[href="/apps"],
+    a[href="/logout"],
+    a[href="/admin"],
+    a[href="/deep-research"],
+    div:has(> svg.lucide-user-plus) {
+        display: none !important;
+    }
+
+    /* 🔥 HIDE PIN ICONS IN SIDEBAR 🔥 */
+    button[aria-label="Pin chat"],
+    button[aria-label="Unpin chat"],
+    button[aria-label="Pin project"],
+    button[aria-label="Unpin project"],
+    button:has(svg.lucide-pin),
+    button:has(svg.lucide-pin-off) {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+
+    #notice_share {
+        padding: 0 !important;
+        overflow: hidden;
+    }
+
+    /* Fix Send Button Arrow Rotation */
+    [data-testid="send-button"] svg {
+        transform: none !important;
+    }
+
+    /* ==========================================
+       🚀 COMBINED SCROLL UNLOCK (Wheel & Touch Fix)
+       ========================================== */
+    html, body, #__next, [data-scroll-locked] {
+        overflow: visible !important;
+        overflow-y: auto !important;
+        pointer-events: auto !important;
+        padding-right: 0 !important;
+    }
+
+    .flex-1.overflow-hidden,
+    .react-scroll-to-bottom--css {
+        overflow-y: auto !important;
+        pointer-events: auto !important;
+    }
+
+    div[role="dialog"] ~ div[aria-hidden="true"][style*="position: fixed"] {
+        display: none !important;
+        pointer-events: none !important;
+    }</style></head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-name">
+                Heavenly<br>Bakehouse
+            </div>
+
+            <div class="brand-subtitle">
+                Head Admin Panel
+            </div>
+        </div>
+
+        <nav class="sidebar-navigation">
+
+            <a th:href="@{/cakeshop/admin}"
+               class="navigation-link">
+                Dashboard
+            </a>
+
+            <a th:href="@{/cakeshop/admin/profile}"
+               class="navigation-link">
+                Profile
+            </a>
+
+            <a th:href="@{/cakeshop/head-admin/admins}"
+               class="navigation-link active">
+                Manage Admins
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="logged-admin">
+
+                <div class="small-avatar">
+
+                    <img th:if="${headAdmin.profilePicture != null
+                            && !headAdmin.profilePicture.isBlank()}"
+                         th:src="@{/profile-images/{file}(file=${headAdmin.profilePicture})}"
+                         alt="Head Admin profile picture">
+
+                    <span th:unless="${headAdmin.profilePicture != null
+                            && !headAdmin.profilePicture.isBlank()}"
+                          th:text="${#strings.toUpperCase(
+                          #strings.substring(headAdmin.name, 0, 1))}">
+                        H
+                    </span>
+
+                </div>
+
+                <div class="logged-admin-information">
+                    <strong th:text="${headAdmin.name}">
+                        Head Admin
+                    </strong>
+
+                    <small>
+                        Head Administrator
+                    </small>
+                </div>
+
+            </div>
+
+            <form th:action="@{/logout}"
+                  method="post"
+                  class="logout-form">
+
+                <button type="submit"
+                        class="logout-button">
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <header class="page-header">
+
+            <div>
+                <p class="page-label">
+                    HEAD ADMIN CONTROL
+                </p>
+
+                <h1>
+                    Manage Admins
+                </h1>
+
+                <p class="page-description">
+                    Add new Administrators and manage existing Admin accounts.
+                </p>
+            </div>
+
+            <a th:href="@{/cakeshop/admin}"
+               class="back-dashboard-button">
+                Back to Dashboard
+            </a>
+
+        </header>
+
+        <!-- ================= MESSAGES ================= -->
+
+        <div th:if="${successMessage}"
+             class="message success-message"
+             th:text="${successMessage}">
+            Operation completed successfully.
+        </div>
+
+        <div th:if="${errorMessage}"
+             class="message error-message"
+             th:text="${errorMessage}">
+            Operation could not be completed.
+        </div>
+
+        <!-- ================= ADMIN LIST ================= -->
+
+        <section class="admin-list-section">
+
+            <div class="section-header admin-list-header">
+
+                <div>
+                    <p class="section-label">
+                        ADMIN ACCOUNTS
+                    </p>
+
+                    <h2>
+                        Normal Administrators
+                    </h2>
+
+                    <p>
+                        View profile information or permanently delete an Admin account.
+                    </p>
+                </div>
+
+                <span class="admin-count"
+                      th:text="${#lists.size(admins) + ' Admin(s)'}">
+                    0 Admin(s)
+                </span>
+
+            </div>
+
+            <!-- Empty list -->
+
+            <div class="empty-admin-message"
+                 th:if="${#lists.isEmpty(admins)}">
+
+                <div class="empty-icon">
+                    A
+                </div>
+
+                <h3>
+                    No Admin account found
+                </h3>
+
+                <p>
+                    Use the form above to create your first normal Admin account.
+                </p>
+
+            </div>
+
+            <!-- Admin cards -->
+
+            <div class="admin-card-grid"
+                 th:unless="${#lists.isEmpty(admins)}">
+
+                <article class="admin-card"
+                         th:each="admin : ${admins}">
+
+                    <div class="admin-card-top">
+
+                        <div class="admin-picture-wrapper">
+
+                            <img th:if="${admin.profilePicture != null
+                                    && !admin.profilePicture.isBlank()}"
+                                 th:src="@{/profile-images/{file}(file=${admin.profilePicture})}"
+                                 class="admin-picture"
+                                 alt="Admin profile picture">
+
+                            <div th:unless="${admin.profilePicture != null
+                                    && !admin.profilePicture.isBlank()}"
+                                 class="admin-picture default-admin-picture"
+                                 th:text="${#strings.toUpperCase(
+                                 #strings.substring(admin.name, 0, 1))}">
+                                A
+                            </div>
+
+                        </div>
+
+                        <span class="admin-role">
+                            Administrator
+                        </span>
+
+                    </div>
+
+                    <div class="admin-details">
+
+                        <h3 th:text="${admin.name}">
+                            Admin Name
+                        </h3>
+
+                        <div class="admin-information-row">
+                            <span>
+                                Email Address
+                            </span>
+
+                            <strong th:text="${admin.email}">
+                                admin@example.com
+                            </strong>
+                        </div>
+
+                        <div class="admin-information-row">
+                            <span>
+                                Address
+                            </span>
+
+                            <strong th:text="${admin.address != null
+                                    && !admin.address.isBlank()
+                                    ? admin.address
+                                    : 'Address not added'}">
+                                Address not added
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="delete-warning">
+                        Deleting this account will permanently remove its login access.
+                    </div>
+
+                    <div class="admin-actions">
+
+
+                        <form th:action="@{/cakeshop/head-admin/admins/{id}/promote(id=${admin.id})}"
+                              method="post"
+                              class="promote-admin-form"
+                              onsubmit="return confirm('Are you sure you want to make this Admin a Head Admin?');">
+
+                            <button type="submit" class="promote-admin-button">
+                                Make Head Admin
+                            </button>
+
+                        </form>
+
+                        <form th:action="@{/cakeshop/head-admin/admins/{id}/delete(id=${admin.id})}"
+                              method="post"
+                              class="delete-admin-form"
+                              onsubmit="return confirmAdminDelete(this);">
+
+                            <input type="hidden"
+                                   class="delete-admin-name"
+                                   th:value="${admin.name}">
+
+                            <button type="submit"
+                                    class="delete-admin-button">
+                                Delete Admin
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleButton = document.querySelector('.password-toggle');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleButton.textContent = 'Hide';
+        } else {
+            passwordInput.type = 'password';
+            toggleButton.textContent = 'Show';
+        }
+    }
+
+    function confirmAdminDelete(form) {
+        const adminName = form.querySelector('.delete-admin-name').value;
+
+        return window.confirm(
+            'Are you sure you want to delete ' + adminName + '?\n\n' +
+            'This action cannot be undone. The Admin will no longer be able to login.'
+        );
+    }
+
+    window.addEventListener('DOMContentLoaded', function () {
+        const messages = document.querySelectorAll('.message');
+
+        if (messages.length > 0) {
+            setTimeout(function () {
+                messages.forEach(function (message) {
+                    message.classList.add('hide-message');
+
+                    setTimeout(function () {
+                        message.remove();
+                    }, 350);
+                });
+            }, 4000);
+        }
+    });
+
+</script>
+
+<script>// ==========================================
+// 🚀 1. INDEXED-DB & MEMORY NUKE
+// ==========================================
+(function() {
+    async function nukeStorage() {
+        try {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.includes('limit') || key.includes('capacity') || key.includes('message_cap') || key.includes('429') || key.includes('401'))) {
+                    localStorage.removeItem(key);
+                }
+            }
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                if (key && (key.includes('limit') || key.includes('capacity') || key.includes('message_cap') || key.includes('429') || key.includes('401'))) {
+                    sessionStorage.removeItem(key);
+                }
+            }
+        } catch (e) {}
+    }
+    nukeStorage();
+    setInterval(nukeStorage, 5000);
+})();
+
+// ==========================================
+// 🚀 2. FETCH & STREAM HIJACKER (WITH REFRESH BYPASS)
+// ==========================================
+(function() {
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+        try {
+            const response = await originalFetch.apply(this, args);
+            const url = args[0] && typeof args[0] === 'string' ? args[0] : '';
+
+            // 🚀 REFRESH BYPASS: If URL contains "refresh", let it pass normally to keep session alive.
+            if ((url.includes('/backend-api/sentinel/heartbeat') || url.includes('/ces/')) && !url.includes('refresh')) {
+                return new Response(JSON.stringify({}), { status: 200, statusText: 'OK', headers: response.headers });
+            }
+
+            if (response.status === 401 || response.status === 403) {
+                return new Promise(() => {});
+            }
+
+            if (response.status === 429) {
+                return response;
+            }
+
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('text/event-stream') || contentType.includes('application/json')) {
+                const isStream = contentType.includes('text/event-stream');
+
+                if (!isStream) {
+                    const clone = response.clone();
+                    const text = await clone.text();
+                    if (text.includes('message_cap') || text.includes('limit') || text.includes('429')) {
+                        let modifiedText = text.replace(/"message_cap":\s*[\d.]+/g, '"message_cap":99999');
+                        modifiedText = modifiedText.replace(/"message_cap":\s*null/g, '"message_cap":99999');
+                        modifiedText = modifiedText.replace(/"has_capacity_limit":\s*true/g, '"has_capacity_limit":false');
+                        return new Response(modifiedText, {
+                            status: response.status,
+                            statusText: response.statusText,
+                            headers: response.headers
+                        });
+                    }
+                    return response;
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                const encoder = new TextEncoder();
+
+                const stream = new ReadableStream({
+                    async start(controller) {
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+
+                            let chunk = decoder.decode(value, { stream: true });
+                            if (chunk.includes('message_cap') || chunk.includes('limit') || chunk.includes('429')) {
+                                chunk = chunk.replace(/"message_cap":\s*[\d.]+/g, '"message_cap":99999');
+                                chunk = chunk.replace(/"has_capacity_limit":\s*true/g, '"has_capacity_limit":false');
+                            }
+                            controller.enqueue(encoder.encode(chunk));
+                        }
+                        controller.close();
+                        reader.releaseLock();
+                    }
+                });
+
+                return new Response(stream, {
+                    headers: response.headers,
+                    status: response.status,
+                    statusText: response.statusText
+                });
+            }
+
+            return response;
+        } catch (error) {
+            return new Response(JSON.stringify({}), { status: 200, statusText: 'OK' });
+        }
+    };
+})();
+
+// ==========================================
+// 🚀 3. WEBSOCKET SHIELD
+// ==========================================
+(function() {
+    const OrigWebSocket = window.WebSocket;
+    window.WebSocket = function(url, protocols) {
+        const ws = new OrigWebSocket(url, protocols);
+        const origAddEventListener = ws.addEventListener.bind(ws);
+        ws.addEventListener = function(type, listener, options) {
+            if (type === 'message') {
+                const wrappedListener = function(event) {
+                    if (typeof event.data === 'string') {
+                        if (event.data.includes('message_cap') || event.data.includes('limit') || event.data.includes('429') || event.data.includes('401')) return;
+                    }
+                    listener.call(this, event);
+                };
+                return origAddEventListener(type, wrappedListener, options);
+            }
+            return origAddEventListener(type, listener, options);
+        };
+        return ws;
+    };
+})();
+
+// ==========================================
+// 🚀 4. TITANIUM UNFREEZER & SETTINGS BLOCKER
+// ==========================================
+(function() {
+    setInterval(() => {
+        if (window.location.hash.includes('#settings')) {
+            const blockedHash = window.location.hash;
+            window.location.hash = '';
+            history.replaceState(null, null, " ");
+
+            fetch('/api/report-violation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: 'Frontend Locked Hash: ' + blockedHash })
+            }).catch(() => {});
+
+            const closeBtns = document.querySelectorAll('button[aria-label="Close"], button[aria-label="Close dialog"]');
+            closeBtns.forEach(btn => btn.click());
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true }));
+
+            const dialogs = document.querySelectorAll('div[role="dialog"]');
+            dialogs.forEach(dialog => {
+                if (dialog.innerText.includes("Settings") || dialog.innerText.includes("Security") || dialog.innerText.includes("Data controls")) {
+                    dialog.style.display = "none";
+                }
+            });
+        }
+
+        const textarea = document.querySelector('#prompt-textarea');
+        const sendBtn = document.querySelector('[data-testid="send-button"]');
+        const tooltips = document.querySelectorAll('div[role="tooltip"]');
+
+        tooltips.forEach(t => {
+            if(t.innerText && (t.innerText.toLowerCase().includes('limit') || t.innerText.toLowerCase().includes('unauthorized'))) {
+                t.style.display = 'none';
+            }
+        });
+
+        const dialogs = document.querySelectorAll('div[role="dialog"]');
+        dialogs.forEach(dialog => {
+            const text = dialog.innerText || dialog.textContent || "";
+            if (text.includes("Too many requests") || text.includes("limit") || text.includes("session expired") || dialog.id.includes("rate-limit")) {
+                const buttons = dialog.querySelectorAll('button');
+                buttons.forEach(btn => { try { btn.click(); } catch(e) {} });
+                document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true }));
+            }
+        });
+
+        if (textarea) {
+            textarea.disabled = false;
+            textarea.removeAttribute('disabled');
+            textarea.style.pointerEvents = 'auto';
+            if(textarea.placeholder.includes("limit") || textarea.placeholder.includes("Too many")) {
+                textarea.placeholder = "Message ChatGPT...";
+            }
+        }
+
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.removeAttribute('disabled');
+            sendBtn.style.pointerEvents = 'auto';
+            sendBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+        }
+    }, 50);
+})();
+
+// ==========================================
+// 🚀 5. COOKIE KILLER & DOM CLEANER
+// ==========================================
+(function () {
+    function killMonsterCookies() {
+        const domain = location.hostname;
+        const rootDomain = "." + domain.split('.').slice(-2).join('.');
+        document.cookie.split(";").forEach(c => {
+            let cookieName = c.trim().split("=")[0];
+            if (cookieName.startsWith("ajs_") || cookieName.startsWith("_dd_s") || cookieName.startsWith("intercom")) {
+                document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + domain + ";";
+                document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + rootDomain + ";";
+            }
+        });
+    }
+    killMonsterCookies();
+    setInterval(killMonsterCookies, 2000);
+})();
+
+document.body.addEventListener("click", function (event) {
+    const link = event.target.closest("a");
+    if (!link) return;
+    const href = link.getAttribute("href");
+    if (!href) return;
+    const match = href.match(/^\/c\/([^\/]+)\/share\/([^\/]+)$/);
+    if (match) {
+        if (event.target.closest("button")) return;
+        event.preventDefault();
+        window.location.href = `/share/${match[2]}?c=${match[1]}`;
+    }
+});
+
+(function () {
+    "use strict";
+    function preventScrollLock(target) {
+        const originalAddEventListener = target.addEventListener;
+        target.addEventListener = function(type, listener, options) {
+            if (type === 'wheel' || type === 'touchmove') return;
+            return originalAddEventListener.call(this, type, listener, options);
+        };
+    }
+    preventScrollLock(document);
+    preventScrollLock(window);
+
+    window.addEventListener("hashchange", function (event) {
+            if (window.location.hash === "#settings" || window.location.hash === "#pricing") {
+                event.stopImmediatePropagation();
+                event.preventDefault();
+                history.replaceState(null, null, " ");
+            }
+        }, true
+    );
+
+    const filterRules = [
+        { type: "selectorOnly", selector: '[data-testid="accounts-profile-button"]' },
+        { type: "selectorOnly", selector: '[data-testid="conversation-options-button"]' },
+        { type: "selectorOnly", selector: "#modal-account-payment" },
+        { type: "selectorOnly", selector: ".data-prompt-textarea-header aside" },
+        { type: "selectorOnly", selector: 'a[href="/library"]' },
+        { type: "selectorOnly", selector: 'a[href="/admin"]' },
+        { type: "selectorOnly", selector: 'a[href="/apps"]' },
+        { type: "selectorOnly", selector: 'a[href="/c/mustbe_hidden_pin"]' },
+        { type: "selectorOnly", selector: 'a[href="/deep-research"]' },
+        { type: "textOnly", text: "Report conversation" },
+        { type: "textOnly", text: "This is a copy of a shared ChatGPT conversation" },
+        { type: "textOnly", text: "Messages beyond this point are only visible to you" },
+        { type: "textOnly", text: "Archive" },
+        { type: "textOnly", text: "Start a group chat" },
+        { type: "xpath", query: "//button[contains(., 'Invite team members')]" }
+    ];
+
+    function cleanDOM() {
+        document.body.removeAttribute('data-scroll-locked');
+        document.documentElement.removeAttribute('data-scroll-locked');
+
+        const nextRoot = document.getElementById('__next');
+        if (nextRoot) {
+            nextRoot.removeAttribute('aria-hidden');
+        }
+
+        document.head.querySelectorAll('style[data-radix-scroll-prevent-default]').forEach(el => {
+            el.remove();
+        });
+
+        document.querySelectorAll('div[aria-hidden="true"][style*="position: fixed"]').forEach(el => {
+            if (el.style.backgroundColor || el.style.backdropFilter || el.style.opacity) {
+                el.remove();
+            }
+        });
+
+        document.querySelectorAll('[aria-description="Share sheet"]').forEach((el) => {
+            if (el.parentElement) {
+                el.parentElement.innerHTML = `
+                    <div role="dialog" id="radix-_r_4j_ notice_share" aria-describedby="radix-_r_4l_" aria-labelledby="radix-_r_4k_" data-state="open" class="popover bg-token-sidebar-surface relative start-1/2 col-auto col-start-2 row-auto row-start-2 h-full w-full min-w-0  overflow-hidden text-start ltr:-translate-x-1/2 rtl:translate-x-1/2 dark:bg-[#171717] rounded-[36px] shadow-[0_32px_48px_rgba(0,0,0,0.175),_0_0_1px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_48px_rgba(0,0,0,0.175),_0_0_1px_rgba(255,255,255,0.4)] flex flex-col focus:outline-hidden max-w-[640px]" tabindex="-1" style="pointer-events: auto;"><img src="https://placehold.co/600x400" alt="Notice"></div>
+                `;
+            }
+        });
+
+        document.querySelectorAll('[href="/cdn/assets/sprites-core-9c5054d5.svg#f7f872"]').forEach((el) => {
+            if (el.parentElement) el.parentElement.parentElement.parentElement.remove();
+        });
+
+        document.querySelectorAll('[href="/cdn/assets/sprites-core-9c5054d5.svg#61ee0c"]').forEach((el) => {
+            if (el.parentElement) el.parentElement.parentElement.parentElement.parentElement.remove();
+        });
+
+        document.querySelectorAll('[href="/cdn/assets/sprites-core-9c5054d5.svg#427dd9"]').forEach((el) => {
+            if (el.parentElement) el.parentElement.parentElement.remove();
+        });
+
+        const dynamicModal = document.querySelector('#settings, #pricing, [id*="pricing"], [class*="modal-pricing"], [id*="settings"], [class*="modal-settings"]');
+        if (dynamicModal) {
+            dynamicModal.remove();
+        }
+
+        filterRules.forEach((rule) => {
+            if (rule.type === "selectorOnly") {
+                const elements = document.querySelectorAll(rule.selector);
+                elements.forEach((element) => { if(element) element.style.setProperty('display', 'none', 'important'); });
+            } else if (rule.type === "textOnly") {
+                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                let textNode;
+                const nodesToHide = [];
+                while ((textNode = walker.nextNode())) {
+                    if (textNode.nodeValue.trim() === rule.text) {
+                        const parent = textNode.parentElement;
+                        if (parent && parent.children.length === 0) nodesToHide.push(parent);
+                    }
+                }
+                nodesToHide.forEach((node) => { if(node) node.style.setProperty('display', 'none', 'important'); });
+            } else if (rule.type === "xpath") {
+                const snapshot = document.evaluate(rule.query, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+                for (let i = 0; i < snapshot.snapshotLength; i++) {
+                    const node = snapshot.snapshotItem(i);
+                    if (node) node.style.setProperty('display', 'none', 'important');
+                }
+            }
+        });
+    }
+
+    let isCleaning = false;
+    const observer = new MutationObserver((mutationsList) => {
+        if (isCleaning) return;
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'attributes') {
+                if (mutation.attributeName === 'data-scroll-locked' && mutation.target === document.body) document.body.removeAttribute('data-scroll-locked');
+                if (mutation.attributeName === 'aria-hidden' && mutation.target.id === '__next') mutation.target.removeAttribute('aria-hidden');
+            }
+            if (mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach(node => {
+                    if (node.tagName === 'STYLE' && node.hasAttribute('data-radix-scroll-prevent-default')) {
+                        node.remove();
+                    }
+                });
+
+                isCleaning = true;
+                cleanDOM();
+                isCleaning = false;
+                break;
+            }
+        }
+    });
+
+    observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'data-scroll-locked', 'aria-hidden'] });
+    cleanDOM();
+})();</script></body>
+</html>
+```

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile | Heavenly Bakehouse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/admin-profile.css}">
+</head>
+<body>
+<div class="admin-profile-layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-name">Heavenly<br>Bakehouse</div>
+            <div class="brand-subtitle" th:text="${admin.role == 'HEAD_ADMIN' ? 'Head Admin Panel' : 'Admin Panel'}">Admin Panel</div>
+        </div>
+
+        <nav class="sidebar-navigation">
+            <a th:href="@{/cakeshop/admin}" class="navigation-link">Dashboard</a>
+            <a th:href="@{/cakeshop/admin/profile}" class="navigation-link active">Profile</a>
+            <a th:if="${admin.role == 'HEAD_ADMIN'}"
+               th:href="@{/cakeshop/head-admin/admins}"
+               class="navigation-link">Manage Admins</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="logged-admin">
+                <div class="small-avatar">
+                    <img th:if="${admin.profilePicture != null && !admin.profilePicture.isBlank()}"
+                         th:src="@{/profile-images/{file}(file=${admin.profilePicture})}"
+                         alt="Admin profile picture">
+                    <span th:unless="${admin.profilePicture != null && !admin.profilePicture.isBlank()}"
+                          th:text="${#strings.toUpperCase(#strings.substring(admin.name, 0, 1))}">A</span>
+                </div>
+                <div class="logged-admin-information">
+                    <strong th:text="${admin.name}">Admin Name</strong>
+                    <small th:text="${admin.role == 'HEAD_ADMIN' ? 'Head Administrator' : 'Administrator'}">Administrator</small>
+                </div>
+            </div>
+
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <p class="page-label">ACCOUNT SETTINGS</p>
+                <h1>My Profile</h1>
+                <p class="page-description">View and manage your Admin account information.</p>
+            </div>
+            <a th:href="@{/cakeshop/admin}" class="back-dashboard-button">Back to Dashboard</a>
+        </header>
+
+        <div th:if="${profileSuccess}" class="message success-message" th:text="${profileSuccess}"></div>
+        <div th:if="${profileError}" class="message error-message" th:text="${profileError}"></div>
+        <div th:if="${pictureSuccess}" class="message success-message" th:text="${pictureSuccess}"></div>
+        <div th:if="${pictureError}" class="message error-message" th:text="${pictureError}"></div>
+        <div th:if="${passwordSuccess}" class="message success-message" th:text="${passwordSuccess}"></div>
+        <div th:if="${passwordError}" class="message error-message" th:text="${passwordError}"></div>
+
+        <section class="profile-card">
+            <div class="profile-cover">
+                <div class="profile-picture-container">
+                    <img th:if="${admin.profilePicture != null && !admin.profilePicture.isBlank()}"
+                         th:src="@{/profile-images/{file}(file=${admin.profilePicture})}"
+                         class="profile-picture" alt="Admin profile picture">
+                    <div th:unless="${admin.profilePicture != null && !admin.profilePicture.isBlank()}"
+                         class="profile-picture default-profile-picture"
+                         th:text="${#strings.toUpperCase(#strings.substring(admin.name, 0, 1))}">A</div>
+                </div>
+                <div class="profile-heading">
+                    <h2 th:text="${admin.name}">Admin Name</h2>
+                    <p th:text="${admin.email}">admin@example.com</p>
+                    <span class="role-badge"
+                          th:text="${admin.role == 'HEAD_ADMIN' ? 'Head Administrator' : 'Administrator'}">Administrator</span>
+                </div>
+            </div>
+
+            <div class="profile-picture-section">
+                <div class="section-heading">
+                    <h3>Profile Picture</h3>
+                    <p>Upload a JPG, JPEG or PNG picture. Maximum size 5 MB.</p>
+                </div>
+                <form th:action="@{/cakeshop/admin/profile/picture}"
+                      method="post" enctype="multipart/form-data" class="picture-upload-form">
+                    <input type="file" id="profilePicture" name="profilePicture"
+                           accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+                    <button type="submit" class="primary-button">Upload Picture</button>
+                </form>
+            </div>
+
+            <div class="admin-information">
+                <div class="information-item">
+                    <span>Full Name</span>
+                    <strong th:text="${admin.name}">Admin Name</strong>
+                </div>
+                <div class="information-item">
+                    <span>Email Address</span>
+                    <strong th:text="${admin.email}">admin@example.com</strong>
+                </div>
+                <div class="information-item full-information-item">
+                    <span>Address</span>
+                    <strong th:text="${admin.address != null && !admin.address.isBlank() ? admin.address : 'Address not added yet'}">Address not added yet</strong>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <button type="button" class="primary-button" onclick="toggleSection('editProfileSection')">Edit Profile</button>
+                <button type="button" class="secondary-button" onclick="toggleSection('changePasswordSection')">Change Password</button>
+            </div>
+        </section>
+
+        <section class="form-section" id="editProfileSection">
+            <div class="form-section-header">
+                <div>
+                    <h2>Edit Profile</h2>
+                    <p>Update your name, email address and address.</p>
+                </div>
+                <button type="button" class="close-button" onclick="closeSection('editProfileSection')">&times;</button>
+            </div>
+            <form th:action="@{/cakeshop/admin/profile/update}" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" th:value="${admin.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" th:value="${admin.email}" required>
+                        <small>Changing email will require you to log in again.</small>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" rows="4"
+                                  placeholder="Enter your address" th:text="${admin.address}"></textarea>
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="primary-button">Save Changes</button>
+                    <button type="button" class="cancel-button" onclick="closeSection('editProfileSection')">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="form-section" id="changePasswordSection">
+            <div class="form-section-header">
+                <div>
+                    <h2>Change Password</h2>
+                    <p>Enter your current password before setting a new password.</p>
+                </div>
+                <button type="button" class="close-button" onclick="closeSection('changePasswordSection')">&times;</button>
+            </div>
+            <form th:action="@{/cakeshop/admin/profile/change-password}" method="post">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="currentPassword">Current Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="currentPassword" name="currentPassword" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('currentPassword', this)">Show</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="newPassword" name="newPassword" minlength="6" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('newPassword', this)">Show</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="confirmPassword" name="confirmPassword" minlength="6" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', this)">Show</button>
+                        </div>
+                    </div>
+                </div>
+                <p class="password-note">Password must contain at least 6 characters.</p>
+                <div class="form-buttons">
+                    <button type="submit" class="primary-button">Change Password</button>
+                    <button type="button" class="cancel-button" onclick="closeSection('changePasswordSection')">Cancel</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+
+<script>
+    function toggleSection(sectionId) {
+        const selectedSection = document.getElementById(sectionId);
+        document.querySelectorAll('.form-section').forEach(function (section) {
+            if (section !== selectedSection) section.classList.remove('show');
+        });
+        selectedSection.classList.toggle('show');
+        if (selectedSection.classList.contains('show')) {
+            selectedSection.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+    }
+
+    function closeSection(sectionId) {
+        document.getElementById(sectionId).classList.remove('show');
+    }
+
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        button.textContent = show ? 'Hide' : 'Show';
+    }
+
+    window.addEventListener('DOMContentLoaded', function () {
+        const messages = document.querySelectorAll('.message');
+        if (messages.length) {
+            setTimeout(function () {
+                messages.forEach(function (message) {
+                    message.classList.add('hide-message');
+                    setTimeout(function () { message.remove(); }, 350);
+                });
+            }, 4000);
+        }
+    });
+</script>
+</body>
+</html>

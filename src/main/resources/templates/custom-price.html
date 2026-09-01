@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Send Custom Cake Price
+    </title>
+
+
+    <link rel="stylesheet"
+          th:href="@{/custom-price.css}">
+
+</head>
+
+
+<body>
+
+
+<div class="page-container">
+
+
+    <div class="header">
+
+        <h1>
+            Send Custom Cake Price
+        </h1>
+
+        <p>
+            Review the customer's custom cake request and provide the final price.
+        </p>
+
+    </div>
+
+
+
+
+    <div class="price-card">
+
+
+        <form th:action="@{/cakeshop/customize/send-price}"
+              method="post"  autocomplete="off">
+
+
+            <input type="hidden"
+                   name="id"
+                   th:value="${customOrder.id}">
+
+
+
+            <div class="form-group">
+
+
+                <label>
+                    Custom Cake Price
+                </label>
+
+
+                <div class="price-input">
+
+                    <span>
+                        ৳
+                    </span>
+
+
+                    <input type="number"
+                           name="price"
+                           placeholder="Enter final price"
+                           required>
+
+                </div>
+
+
+            </div>
+
+
+
+
+            <div class="form-group">
+
+
+                <label>
+                    Message To Customer
+                </label>
+
+
+                <textarea
+                        name="message"
+                        rows="6"
+                        placeholder="Write message for customer..."
+                        required>
+
+Your custom cake request has been reviewed.
+
+The price is mentioned here.
+
+Please confirm your order.
+
+                </textarea>
+
+
+            </div>
+
+
+
+
+            <div th:if="${customOrder.status != 'WAITING_CONFIRMATION'}">
+
+
+                <button type="submit">
+
+                    Send Price To Customer
+
+                </button>
+
+
+            </div>
+
+
+
+            <div th:if="${customOrder.status == 'WAITING_CONFIRMATION'}"
+                 class="already-sent-message">
+
+
+                Price has already been sent to customer.
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
